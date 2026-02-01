@@ -6,229 +6,224 @@ import { Button } from '@/components/ui/button'
 import { ChevronDown } from 'lucide-react'
 
 export default function MusicPage() {
-  const [expandedSection, setExpandedSection] = React.useState<string | null>('clubs')
+  const [expandedSection, setExpandedSection] = React.useState<string | null>('discover')
 
   const sections = [
     {
-      id: 'clubs',
-      title: 'Music Clubs at FPTU',
+      id: 'discover',
+      title: 'Khám Phá Bản Thân - Lựa Chọn Nhạc Cụ Phù Hợp',
       icon: '🎸',
-      content: `FPTU has a vibrant music community with several active clubs:
+      content: `Giới thiệu các loại nhạc cụ phổ biến tại trường:
 
-Main Music Clubs:
-• Guitar Club - Learn acoustic and electric guitar
-• Piano Club - Classical and contemporary piano
-• Band Club - Form and join rock/pop bands
-• Traditional Music Club - Vietnamese instruments
-• DJ/Electronic Music Club - Modern music production
-• Vocal Club - Singing techniques and performances
-• Ukulele Club - Casual instrument learning
+Các Nhạc Cụ Truyền Thống:
+• Đàn Bầu - Độc đáo, mang đậm linh hồn Việt
+• Đàn Tranh - Gọn nhẹ, thanh tao, có 16-36 dây
+• Đàn Tỳ Bà - Phức tạp, đòi hỏi sự tỉ mỉ
+• Sáo Trúc - Gọn nhẹ, lãng tử (phổ biến với các bạn nam)
 
-How to Join:
-1. Visit the student activities center
-2. Attend club showcase events
-3. Contact club leaders directly
-4. Join Facebook groups for updates
-5. Most clubs are free or have minimal fees
+Tư Vấn Chọn "Bạn Đồng Hành":
+• Sáo Trúc: Thích hợp cho những ai thích tiếng lãng tử, dễ mang theo
+• Đàn Tranh/Tỳ Bà: Phù hợp cho các bạn nữ yêu thích kỹ năng tinh tế
+• Đàn Bầu: Cho những người muốn khám phá âm thanh độc đáo
+• Nhạc cụ hiện đại: Guitar, keyboard cho phong cách thời đại
 
-Benefits:
-• Make new friends with shared interests
-• Learn new skills in a supportive environment
-• Perform at campus events
-• Access to club resources and equipment`
+Câu Hỏi Đặt Ra:
+• Bạn thích âm thanh nào? (Mềm, sắc, trầm, cao?)
+• Có sẵn sàng luyện tập đều đặn? (ít nhất 15-30 phút/ngày)
+• Bạn muốn hiểu biết sâu hay chỉ thích chơi casual?`
     },
     {
-      id: 'instruments',
-      title: 'Traditional Vietnamese Instruments',
-      icon: '🎵',
-      content: `Vietnamese music has a rich heritage with unique instruments:
-
-String Instruments:
-• Đàn tranh - 16-36 string zither (unique Vietnamese)
-• Đàn nguyệt - Moon-shaped lute
-• Đàn đáy - Long-necked lute
-• Đàn tính - Three-string lute
-
-Wind Instruments:
-• Sáo - Bamboo flute
-• Kèn - Double-reed woodwind
-• Ống quạt - Fan-shaped bamboo pipe
-
-Percussion:
-• Trống - Traditional drums
-• Mõ - Wooden fish (temple bell)
-• Chập - Finger cymbals
-• Bàn - Wooden block
-
-Learning Opportunities:
-Students can take elective courses on traditional Vietnamese instruments. Check the music department for schedules.`
-    },
-    {
-      id: 'events',
-      title: 'Music Events & Performances',
-      icon: '🎤',
-      content: `FPTU hosts numerous music events throughout the year:
-
-Regular Events:
-• Weekly open mic nights (Every Friday, 7 PM)
-• Monthly band battles
-• Seasonal concerts and festivals
-• New Year talent shows
-• Graduation galas featuring student performers
-
-Annual Highlights:
-• Spring Music Festival (March) - 3-day event with performances
-• Summer Concert Series (June) - Outdoor performances
-• Autumn Festival (September) - Cultural performances
-• Winter Christmas Concert (December)
-• Talent Show for First-Year Students
-
-Performance Opportunities:
-• Join the student orchestra
-• Perform at campus events
-• Play at local venues in Da Nang
-• Record music at the campus studio
-• Collaborate with other musicians
-
-Event Locations:
-• Main Auditorium - Large performances
-• Student Center - Smaller events
-• Outdoor Stage (Weather permitting)
-• Practice Studios - Rehearsals`
-    },
-    {
-      id: 'learning',
-      title: 'Learning Music at FPTU',
+      id: 'practice',
+      title: 'Lộ Trình Rèn Luyện - Xây Dựng Thói Quen',
       icon: '📚',
-      content: `Whether you're a beginner or advanced musician:
+      content: `Bí Quyết Thành Công:
 
-Formal Classes:
-• Music electives for interested students
-• Music theory courses
-• Introduction to music production
-• Sound engineering basics
+Xây Dựng Thói Quen:
+• Luyện tập ít nhất 15-30 phút mỗi ngày
+• Chọn một thời gian cố định để tập (sáng sớm hoặc tối)
+• Bắt đầu từ những bài dễ, sau đó nâng cao dần
+• Tìm một bạn cùng luyện tập để tạo động lực
 
-Informal Learning:
-• Club lessons (often free or cheap)
-• Peer-to-peer mentoring
-• YouTube learning resources
-• Band rehearsals with other students
+Record & Review:
+• Ghi âm lại lúc tập để tự nhận diện lỗi sai
+• Nghe lại bài của mình và so sánh với bài chuẩn
+• Thấy được sự tiến bộ qua từng tuần
+• Xác định những phần cần cải thiện
 
-Resources Available:
-• Practice rooms in the music building
-• Equipment rental for club members
-• Soundproofed studios
-• Amplifiers and PA systems
-• Recording equipment (for club events)
+Các Cấp Độ Tiến Bộ:
+1. Biết nốt - Nhận biết âm thanh, cơ bản
+2. Vào bài - Chơi được bài, nhưng chưa mượt
+3. Biểu diễn - Chơi mượt, tự tin trước người khác
 
-Tips for Getting Started:
-1. Start with a club that interests you
-2. Don't worry if you can't play an instrument - clubs have lessons
-3. Practice regularly with friends
-4. Attend performances to get inspired
-5. Join jam sessions with other musicians
-6. Consider getting a private instructor (available locally)
-
-Budget Tips:
-• Borrow instruments from clubs
-• Buy affordable starter instruments
-• Rent expensive instruments instead of buying
-• Share costs with bandmates`
+Tự Tin Tỏa Sáng:
+• Đừng ngại giao lưu với những người cùng sở thích
+• Trao đổi kinh nghiệm với các anh chị khóa trên
+• Tham gia các buổi jam session
+• Biểu diễn trong các sự kiện trường`
     },
     {
-      id: 'performances',
-      title: 'Getting into Performances',
-      icon: '🎭',
-      content: `How to become a performer at FPTU:
+      id: 'shopping-guide',
+      title: 'Địa Chỉ Mua Sắm & Shopping Guide',
+      icon: '🛍️',
+      content: `Những Địa Điểm Uy Tín:
 
-Solo Performers:
-1. Register for talent shows and competitions
-2. Perform at open mic nights
-3. Audition for festival performances
-4. Create content for social media
+Cửa Hàng Nhạc Cụ:
+• Nhạc Cụ Hảo Vĩnh - 86 Hùng Vương, Đà Nẵng
+  - Cơ sở lâu đời, uy tín cao
+  - Bán các loại nhạc cụ truyền thống và hiện đại
+  - Cung cấp dịch vụ bảo hành
+  
+• Các cửa hàng khác:
+  - Cửa hàng nhạc trên Nguyễn Huệ
+  - Thị trường nhạc cụ trực tuyến (Shopee, Lazada)
 
-Band/Group Performers:
-1. Form a band with friends
-2. Rehearse regularly and develop a setlist
-3. Submit applications to event organizers
-4. Start with smaller events first
-5. Network with other bands
+Lời Khuyên Trước Khi Mua:
+• NÊN nhờ giảng viên tư vấn trước
+• NÊN nhờ anh chị khóa trên xem xét chất lượng
+• TRÁNH mua loại không phù hợp
+• KIỂM TRA kỹ lưỡng trước khi thanh toán
+• NÊN có bảo hành hoặc hoá đơn
 
-Performance Tips:
-• Practice your set multiple times
-• Learn stage presence and confidence
-• Interact with the audience
-• Start with easier/shorter performances
-• Get feedback from mentors
-• Record your performances for portfolio
+Lựa Chọn Dựa Trên Ngân Sách:
+• Nhạc cụ giá rẻ (300K-500K): Chất lượng cơ bản
+• Nhạc cụ trung bình (500K-2M): Chất lượng tốt
+• Nhạc cụ cao cấp (2M+): Cho những ai nghiêm túc
+• Cho mượn từ CLB: Miễn phí hoặc giá rẻ
 
-Promotion:
-• Use social media to build a following
-• Collaborate with other musicians
-• Create posters for campus events
-• Spread word through clubs
-• Post on bulletin boards
-
-Next Steps:
-If you love performing, consider:
-• Auditioning for band competitions
-• Joining the campus orchestra
-• Starting your own music group
-• Pursuing music as an elective or minor`
+Bảo Trì & Bảo Dưỡng:
+• Lau sạch sau mỗi lần chơi
+• Để ở nơi khô ráo, tránh ẩm
+• Kiểm tra định kỳ
+• Sửa chữa tại những cơ sở uy tín`
     },
     {
       id: 'resources',
-      title: 'Music Resources & Contacts',
-      icon: '📞',
-      content: `Important contacts and resources:
+      title: 'Tài Nguyên & Nơi Học Tập',
+      icon: '📱',
+      content: `Video & Podcast:
+• Video Podcast: "Học nhạc cụ dân tộc - Khó hay dễ?"
+• Tutorial YouTube: Từng bước hướng dẫn
+• Podcast: Chia sẻ từ các bạn đã học
+• Buổi hội thảo trực tiếp
 
-Music Department:
-• Location: Building A, 3rd Floor
-• Email: music@fptu.edu.vn
-• Phone: +84-236-XXXX-XXX
-• Office Hours: Mon-Fri, 8 AM - 5 PM
+Những Đường Link Hữu Ích:
+• [Nguồn học liệu bổ túc ngoài giờ]
+• [Bản đồ đến tiệm Hảo Vĩnh]
+• [Lịch hoạt động CLB âm nhạc]
+• [Facebook Group: FPTU Music Lovers]
 
-Club Leadership:
-• Guitar Club President: Nguyễn Văn A
-• Piano Club: Contact Music Department
-• Band Club: Instagram @fptu.bandclub
-• Traditional Music: Contact Music Department
+Các Câu Lạc Bộ Âm Nhạc:
+• Guitar Club - Học từ cơ bản đến nâng cao
+• Traditional Music Club - Chuyên về nhạc cụ dân tộc
+• Vocal Club - Kỹ năng hát
+• Band Club - Tạo thành nhóm nhạc
+• DJ Club - Nhạc điện tử
 
-Useful Websites:
-• FPTU Music Portal: music.fptu.edu.vn
-• Student Activities: activities.fptu.edu.vn
-• Music Store Contacts: Available at department
-• Local Music Venues in Da Nang
+Nơi Tập Luyện:
+• Phòng CLB âm nhạc
+• Sân khấu trường
+• Phòng tập chung
+• Mở cửa hàng ngày (sau giờ học)
 
-Equipment Rental:
-• Amplifiers and speakers
-• Microphones and cables
-• Drums and percussion
-• DJ equipment
-• Contact: Music Department
+Liên Hệ & Hỗ Trợ:
+• Văn phòng CLB: [Địa chỉ]
+• Email: club@fptu.edu.vn
+• Facebook: FPTU Music Club
+• Gặp trực tiếp tại các sự kiện recruit`
+    },
+    {
+      id: 'inspiration',
+      title: 'Sự Kiện & Cơ Hội Biểu Diễn',
+      icon: '🎤',
+      content: `Những Sự Kiện Định Kỳ:
 
-Studio Booking:
-• Reserve practice rooms online
-• Book recording studio slots
-• Equipment checkout system
-• Free for club events`
-    }
+Sự kiện trong năm:
+• Các buổi Open Mic - Diễn ra hàng tuần
+• Talent Show - Cơ hội trưng bày tài năng
+• Music Festival - Lớn nhất năm
+• Fundraising Concert - Đội từ thiện
+• Graduation Gala - Biệt vụ sinh viên K
+
+Cơ Hội Biểu Diễn:
+• Biểu diễn trong lễ khai giảng/bế giảng
+• Tham gia các buổi nhạc hòa nhạc
+• Perform tại các sự kiện sinh viên
+• Tham gia chương trình trực tuyến
+• Lưu lại các video để xây dựng portfolio
+
+Hưởng Lợi Từ Biểu Diễn:
+• Tăng tự tin
+• Mở rộng mạng lưới bạn bè
+• Có thêm kỹ năng sân khấu
+• Khả năng bất ngờ được mời perform ngoài
+• Có kinh nghiệm quý báu`
+    },
   ]
 
   return (
-    <div>
-      {sections.map(section => (
-        <div key={section.id}>
-          <h2>
-            {section.icon} {section.title}
-            <Button onClick={() => setExpandedSection(section.id === expandedSection ? null : section.id)}>
-              {section.id === expandedSection ? 'Collapse' : 'Expand'}
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </h2>
-          {section.id === expandedSection && <div>{section.content}</div>}
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5">
+      {/* Back Navigation */}
+      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <Link href="/knowledge-base" className="text-primary hover:underline flex items-center gap-2 text-sm">
+            ← Back to Knowledge Base
+          </Link>
         </div>
-      ))}
+      </div>
+
+      {/* Header */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="space-y-4">
+          <span className="text-5xl">🎵</span>
+          <h1 className="text-4xl sm:text-5xl font-bold">Nhạc Cụ Dân Tộc - Thanh Âm Truyền Thống</h1>
+          <p className="text-lg text-muted-foreground">
+            Khám phá hành trình học nhạc cụ truyền thống Việt Nam tại FPTU Đà Nẵng
+          </p>
+        </div>
+      </section>
+
+      {/* Content Sections */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-20">
+        <div className="space-y-4">
+          {sections.map((section) => (
+            <div key={section.id} className="border border-border rounded-lg bg-card overflow-hidden">
+              <button
+                onClick={() => setExpandedSection(expandedSection === section.id ? null : section.id)}
+                className="w-full p-6 flex items-center justify-between hover:bg-card/80 transition-colors"
+              >
+                <div className="flex items-center gap-4 text-left">
+                  <span className="text-3xl">{section.icon}</span>
+                  <h2 className="text-xl font-bold">{section.title}</h2>
+                </div>
+                <ChevronDown
+                  size={20}
+                  className={`transition-transform ${expandedSection === section.id ? 'rotate-180' : ''}`}
+                />
+              </button>
+              {expandedSection === section.id && (
+                <div className="px-6 pb-6 pt-0 border-t border-border whitespace-pre-wrap text-muted-foreground leading-relaxed">
+                  {section.content}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="relative rounded-xl border border-border overflow-hidden bg-gradient-to-br from-accent/5 to-primary/5 p-8 sm:p-12 text-center space-y-6">
+          <h2 className="text-2xl sm:text-3xl font-bold">Sẵn Sàng Bắt Đầu?</h2>
+          <p className="text-muted-foreground">
+            Hãy tham gia một CLB âm nhạc hoặc liên hệ để biết thêm thông tin chi tiết!
+          </p>
+          <Link href="/assistant">
+            <Button className="gap-2">
+              Hỏi AI Assistant
+            </Button>
+          </Link>
+        </div>
+      </section>
     </div>
   )
 }

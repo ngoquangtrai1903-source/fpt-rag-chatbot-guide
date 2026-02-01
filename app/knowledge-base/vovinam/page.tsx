@@ -10,127 +10,137 @@ export default function VovinamPage() {
 
   const sections = [
     {
-      id: 'basics',
-      title: 'What is Vovinam?',
+      id: 'martial-way',
+      title: 'Võ Đạo & Thể Chất - Hành Trình Rèn Luyện Nhân Lễ Nghĩa Trí Tín',
       icon: '🥋',
-      content: `Vovinam (Việt Võ Đạo) is a modern Vietnamese martial art created in 1938. It combines traditional Vietnamese fighting techniques with influences from other martial arts. The art emphasizes speed, power, and flexibility.
+      content: `Vovinam không chỉ là môn học bắt buộc, mà còn là hành trình rèn luyện Nhân - Lễ - Nghĩa - Trí - Tín.
 
-Key Characteristics:
-• Combines kicking techniques (inspired by Chinese martial arts)
-• Hand techniques and grappling (inspired by Judo)
-• Philosophical approach to martial training
-• Emphasis on self-defense and character development`
+Các kỹ năng từ cơ bản đến nâng cao:
+• Căn bản: Đấm, đá, gạt (nền tảng cho mọi kỹ năng)
+• Nâng cao: Đòn chân tấn công và kỹ thuật phức tạp
+• Bài quyền: Hệ thống động tác liên tiếp
+
+5 Nguyên tắc Vovinam:
+1. Nhân (Humanity) - Lòng nhân ái
+2. Lễ (Courtesy) - Tôn trọng, lễ phép
+3. Nghĩa (Justice) - Sự công bằng
+4. Trí (Wisdom) - Tri thức, hiểu biết
+5. Tín (Loyalty/Faith) - Sự trung thành, tin tưởng
+
+Lợi ích:
+• Phát triển sức mạnh và sự dẻo dai
+• Nâng cao kỹ năng tự vệ
+• Rèn luyện ý chí quyết tâm
+• Xây dựng kỷ luật cá nhân`
     },
     {
-      id: 'training',
-      title: 'Training at FPTU',
-      icon: '👥',
-      content: `Vovinam training is a mandatory part of physical education for first-year students at FPTU.
-
-Training Schedule:
-• Sessions: 2 times per week
-• Duration: 90 minutes per session
-• Location: Sports Complex, Main Campus
-• Time Slots: Monday & Wednesday (7:00-8:30 AM or 3:00-4:30 PM)
-
-What to Bring:
-• Comfortable athletic clothing
-• Training shoes (not required for basics)
-• Water bottle
-• Towel
-• No jewelry or valuables`
-    },
-    {
-      id: 'techniques',
-      title: 'Basic Techniques',
-      icon: '💪',
-      content: `Basic Vovinam techniques include:
-
-Kicking Techniques:
-• Straight kick (đá thẳng)
-• Roundhouse kick (đá vòng)
-• Side kick (đá ngang)
-• Spinning kick (đá xoay)
-
-Hand Techniques:
-• Punch (đấm thẳng)
-• Hook punch (đấm móc)
-• Palm strike (tấc hạ)
-• Elbow strike (khuỷu đập)
-
-Defense:
-• Blocking (chặn)
-• Parrying (chống)
-• Footwork and distance management`
-    },
-    {
-      id: 'ranking',
-      title: 'Belt Ranking System',
+      id: 'ranking-system',
+      title: 'Hệ Thống Thi Cử Và Đai',
       icon: '🏅',
-      content: `Vovinam uses a belt ranking system to measure progress:
+      content: `Hệ thống thi lên đai tại FPTU:
 
-Beginner Levels:
-• White belt - Beginner
-• Yellow belt - Basic techniques mastered
-• Orange belt - Intermediate foundation
-• Green belt - Growing proficiency
+Các cấp độ đai:
+• Đai trắng: Mới vào
+• Đai vàng: Nắm vững kỹ thuật cơ bản
+• Đai cam: Nền tảng trung cấp
+• Đai xanh: Kỹ năng phát triển
+• Đai xanh đậm: Gần như thành thạo
+• Đai nâu: Sinh viên chuyên sâu
+• Đai đen: Huấn luyện viên
 
-Advanced Levels:
-• Blue belt - Advanced student
-• Brown belt - Expert student
-• Black belt - Master instructor
+Cách tính điểm:
+• Chuyên cần (30%): Có mặt đầy đủ, tích cực
+• Kỹ thuật (40%): Thực hiện chính xác các động tác
+• Thể chất (20%): Sức mạnh, sự dẻo dai
+• Thái độ (10%): Tinh thần, tôn trọng
 
-Testing Requirements:
-Students typically test every 2-3 months. Tests include technique demonstration, physical fitness tests, and sparring.`
+Kỳ thi:
+Thường diễn ra 1-2 tháng/lần
+Gồm: Thực hành kỹ thuật, kiểm tra thể lực, đấu tự do`
     },
     {
-      id: 'tips',
-      title: 'Tips for Success',
+      id: 'tips-from-seniors',
+      title: 'Bí Kíp "Vượt Ải" - Tips Từ Tiền Bối',
       icon: '⭐',
-      content: `How to make the most of Vovinam training:
+      content: `Thái độ quyết định điểm số:
+• Đừng học đối phó - Hãy học để trở thành tốt hơn
+• Giáo viên sẽ nhận ra sự nỗ lực và tâm huyết của bạn
+• Tham gia tích cực trong từng buổi tập
 
-During Training:
-• Arrive 10 minutes early to warm up
-• Ask your instructor for corrections
-• Practice forms regularly
-• Focus on technique over speed initially
-• Stay hydrated throughout sessions
+Nền tảng từ Tấn:
+• Chú trọng từ đòn thế cơ bản nhất (Tấn)
+• Nó sẽ giúp bạn có nền tảng vững chắc
+• Các bài quyền phức tạp sẽ dễ dàng hơn
+• Đừng vội vàng, hãy chắc chắn từng bước
 
-Outside of Class:
-• Practice basic techniques at home (10-15 min daily)
-• Stretch regularly to improve flexibility
-• Watch instructional videos online
-• Join practice sessions with other students
-• Maintain good physical fitness
+Trang Phục & Quy Tắc:
+• Luôn giữ võ phục sạch sẽ
+• Thắt đai đúng cách trước khi vào thảm
+• Tôn trọng thảm tập bằng cách để giầy dép ngoài
+• Chào giáo viên và bạn khi vào/ra lớp
 
-Mental Approach:
-• Be patient with your progress
-• Respect your instructors and classmates
-• Focus on discipline and self-improvement
-• Don't compare yourself to others
-• Enjoy the learning process`
+Luyện Tập Ngoài Giờ:
+• 15-30 phút mỗi ngày sẽ tạo nên sự khác biệt
+• Thực hành với bạn cùng lớp
+• Ghi âm lại bài tập để kiểm tra lỗi
+• Duy trì thể lực tốt`
     },
     {
-      id: 'faq',
-      title: 'Frequently Asked Questions',
-      icon: '❓',
-      content: `Q: Do I need prior martial arts experience?
-A: No! Vovinam training starts from the basics. Everyone begins as a beginner.
+      id: 'community',
+      title: 'Kết Nối Cộng Đồng - FPT Vovinam Club',
+      icon: '👥',
+      content: `Những sự kiện không thể bỏ qua:
 
-Q: What if I have an injury or physical limitation?
-A: Talk to your instructor. They can provide modifications for most exercises.
+FPT Vovinam Club:
+• Nơi giao lưu của những người yêu võ
+• Tập thêm ngoài giờ với những bạn cùng sở thích
+• Tham gia các sự kiện "Võ nhạc"
+• Biểu diễn Vovinam Dance trong các lễ hội
 
-Q: Can I attend extra training sessions?
-A: Yes! Many clubs offer additional training. Check the sports complex bulletin board.
+Lợi ích của tham gia CLB:
+• Kết nối với các anh chị khóa trên
+• Được "cầm tay chỉ việc" từ những người giỏi
+• Cơ hội biểu diễn và thi đấu
+• Xây dựng tình bạn vượt thời gian
 
-Q: What's the difference between Vovinam and other martial arts?
-A: Vovinam emphasizes speed and fluidity. It's also very kicks-focused compared to some other arts.
+Cách Đăng Ký:
+• Liên hệ phòng phục vụ sinh viên
+• Tham gia các sự kiện giới thiệu CLB
+• Hoặc đến tập luyện trực tiếp tại phòng tập
 
-Q: Do I need to buy special equipment?
-A: Basic comfortable clothes work. Eventually, you might want a proper uniform (áo võ).
+Sự kiện định kỳ:
+• Hội thi Vovinam hàng kỳ
+• Biểu diễn võ nhạc vào các dịp lễ
+• Đấu tập giữa các lớp
+• Chuyến du lịch tập thể`
+    },
+    {
+      id: 'resources',
+      title: 'Tài Nguyên & Liên Hệ',
+      icon: '📚',
+      content: `Video & Tài Liệu Hữu Ích:
+• Video Podcast: "Vovinam FPTU và những kỷ niệm dở khóc dở cười"
+• Hướng dẫn thắt đai võ đúng cách
+• Các kỹ thuật cơ bản (từng bước)
+• Lịch sử và triết lý Vovinam
 
-Q: How often should I practice outside of class?
-A: Even 10-15 minutes daily helps significantly with progress.`
+Các Đường Link Hữu Ích:
+• [Đăng ký CLB Vovinam FPTU]
+• [Video hướng dẫn thắt đai võ]
+• [Lịch tập luyện hàng tuần]
+• [Liên hệ HLV Vovinam]
+
+Phòng Tập & Trang Thiết Bị:
+• Địa điểm: Khu thể thao FPTU, tầng 2
+• Mở cửa: 6:30 AM - 8:00 PM hàng ngày
+• Trang bị: Thảm tập, gương, tạ, thiết bị stretching
+• Cầu hình: Tùy theo buổi tập
+
+Liên Hệ Hỗ Trợ:
+• Phòng Giáo Dục Thể Chất
+• Email: pe@fptu.edu.vn
+• Điện thoại: [số điện thoại phòng PE]
+• Văn phòng: Tòa nhà Thể thao`
     },
   ]
 
