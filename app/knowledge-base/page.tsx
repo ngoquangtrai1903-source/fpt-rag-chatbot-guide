@@ -39,6 +39,14 @@ export default function KnowledgeBasePage() {
       sections: ['Housing', 'Dining', 'Transportation', 'Campus Map'],
       color: 'from-green-500 to-green-600',
     },
+    {
+      title: 'Academic Mastery',
+      description: 'Master FPT systems: FAP, FLM, SEB, EOS • Study habits & daily tracker',
+      icon: '🎓',
+      href: '/knowledge-base/academic-mastery',
+      sections: ['The Big 4', 'Study Habits', 'Exam Tips'],
+      color: 'from-orange-500 to-orange-600',
+    },
   ]
 
   return (

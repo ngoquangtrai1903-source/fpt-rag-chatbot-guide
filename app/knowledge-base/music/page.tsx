@@ -3,17 +3,18 @@
 import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ChevronDown } from 'lucide-react'
+import { Music, Mic2, Guitar, Piano, Users, Check, MapPin, Sparkles, ExternalLink, BookOpen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export default function MusicPage() {
-  const [expandedSection, setExpandedSection] = React.useState<string | null>('discover')
+  const [checklist, setChecklist] = React.useState<Record<string, boolean>>({})
 
-  const sections = [
-    {
-      id: 'discover',
-      title: 'Khám Phá Bản Thân - Lựa Chọn Nhạc Cụ Phù Hợp',
-      icon: '🎸',
-      content: `Giới thiệu các loại nhạc cụ phổ biến tại trường:
+  const toggleChecklist = (id: string) => {
+    setChecklist((prev) => ({ ...prev, [id]: !prev[id] }))
+  }
+
+  // Dùng đúng nội dung bạn đã cung cấp, chỉ đổi cách trình bày
+  const instrumentText = `Giới thiệu các loại nhạc cụ phổ biến tại trường:
 
 Các Nhạc Cụ Truyền Thống:
 • Đàn Bầu - Độc đáo, mang đậm linh hồn Việt
@@ -31,12 +32,8 @@ Câu Hỏi Đặt Ra:
 • Bạn thích âm thanh nào? (Mềm, sắc, trầm, cao?)
 • Có sẵn sàng luyện tập đều đặn? (ít nhất 15-30 phút/ngày)
 • Bạn muốn hiểu biết sâu hay chỉ thích chơi casual?`
-    },
-    {
-      id: 'practice',
-      title: 'Lộ Trình Rèn Luyện - Xây Dựng Thói Quen',
-      icon: '📚',
-      content: `Bí Quyết Thành Công:
+
+  const practiceText = `Bí Quyết Thành Công:
 
 Xây Dựng Thói Quen:
 • Luyện tập ít nhất 15-30 phút mỗi ngày
@@ -60,12 +57,8 @@ Tự Tin Tỏa Sáng:
 • Trao đổi kinh nghiệm với các anh chị khóa trên
 • Tham gia các buổi jam session
 • Biểu diễn trong các sự kiện trường`
-    },
-    {
-      id: 'shopping-guide',
-      title: 'Địa Chỉ Mua Sắm & Shopping Guide',
-      icon: '🛍️',
-      content: `Những Địa Điểm Uy Tín:
+
+  const shoppingText = `Những Địa Điểm Uy Tín:
 
 Cửa Hàng Nhạc Cụ:
 • Nhạc Cụ Hảo Vĩnh - 86 Hùng Vương, Đà Nẵng
@@ -95,12 +88,8 @@ Bảo Trì & Bảo Dưỡng:
 • Để ở nơi khô ráo, tránh ẩm
 • Kiểm tra định kỳ
 • Sửa chữa tại những cơ sở uy tín`
-    },
-    {
-      id: 'resources',
-      title: 'Tài Nguyên & Nơi Học Tập',
-      icon: '📱',
-      content: `Video & Podcast:
+
+  const resourcesText = `Video & Podcast:
 • Video Podcast: "Học nhạc cụ dân tộc - Khó hay dễ?"
 • Tutorial YouTube: Từng bước hướng dẫn
 • Podcast: Chia sẻ từ các bạn đã học
@@ -130,12 +119,8 @@ Liên Hệ & Hỗ Trợ:
 • Email: club@fptu.edu.vn
 • Facebook: FPTU Music Club
 • Gặp trực tiếp tại các sự kiện recruit`
-    },
-    {
-      id: 'inspiration',
-      title: 'Sự Kiện & Cơ Hội Biểu Diễn',
-      icon: '🎤',
-      content: `Những Sự Kiện Định Kỳ:
+
+  const eventsText = `Những Sự Kiện Định Kỳ:
 
 Sự kiện trong năm:
 • Các buổi Open Mic - Diễn ra hàng tuần
@@ -157,69 +142,191 @@ Hưởng Lợi Từ Biểu Diễn:
 • Có thêm kỹ năng sân khấu
 • Khả năng bất ngờ được mời perform ngoài
 • Có kinh nghiệm quý báu`
-    },
+
+  const practiceChecklist = [
+    { id: 'daily', label: 'Luyện tập ít nhất 15-30 phút mỗi ngày', icon: Sparkles },
+    { id: 'schedule', label: 'Chọn một thời gian cố định để tập', icon: Music },
+    { id: 'record', label: 'Ghi âm để tự nhận diện lỗi và tiến bộ', icon: Mic2 },
+    { id: 'buddy', label: 'Tìm bạn cùng luyện tập để tạo động lực', icon: Users },
   ]
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5">
-      {/* Back Navigation */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <Link href="/knowledge-base" className="text-primary hover:underline flex items-center gap-2 text-sm">
-            ← Back to Knowledge Base
-          </Link>
-        </div>
-      </div>
+  const checkedCount = Object.values(checklist).filter(Boolean).length
 
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
       {/* Header */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="space-y-4">
-          <span className="text-5xl">🎵</span>
-          <h1 className="text-4xl sm:text-5xl font-bold">Nhạc Cụ Dân Tộc - Thanh Âm Truyền Thống</h1>
-          <p className="text-lg text-muted-foreground">
-            Khám phá hành trình học nhạc cụ truyền thống Việt Nam tại FPTU Đà Nẵng
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
+            <Music size={18} />
+            Nhạc cụ & CLB âm nhạc
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-bold text-foreground">Nhạc Cụ Dân Tộc - Thanh Âm Truyền Thống</h1>
+          <p className="text-lg text-muted-foreground max-w-2xl">
+            Khám phá hành trình học nhạc cụ truyền thống Việt Nam tại FPTU Đà Nẵng.
           </p>
         </div>
       </section>
 
-      {/* Content Sections */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-20">
-        <div className="space-y-4">
-          {sections.map((section) => (
-            <div key={section.id} className="border border-border rounded-lg bg-card overflow-hidden">
-              <button
-                onClick={() => setExpandedSection(expandedSection === section.id ? null : section.id)}
-                className="w-full p-6 flex items-center justify-between hover:bg-card/80 transition-colors"
-              >
-                <div className="flex items-center gap-4 text-left">
-                  <span className="text-3xl">{section.icon}</span>
-                  <h2 className="text-xl font-bold">{section.title}</h2>
-                </div>
-                <ChevronDown
-                  size={20}
-                  className={`transition-transform ${expandedSection === section.id ? 'rotate-180' : ''}`}
-                />
-              </button>
-              {expandedSection === section.id && (
-                <div className="px-6 pb-6 pt-0 border-t border-border whitespace-pre-wrap text-muted-foreground leading-relaxed">
-                  {section.content}
-                </div>
-              )}
+      {/* Khám phá bản thân + Lộ trình luyện tập */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="rounded-xl border-2 border-primary/30 bg-card p-6 space-y-3">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Guitar size={20} />
+              Khám phá bản thân - Lựa chọn nhạc cụ
+            </h2>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{instrumentText}</p>
+          </div>
+          <div className="rounded-xl border-2 border-accent/30 bg-card p-6 space-y-3">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Sparkles size={20} />
+              Lộ trình rèn luyện - Xây dựng thói quen
+            </h2>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{practiceText}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Checklist luyện tập */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="rounded-xl border border-border bg-card p-6 sm:p-8 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                <span className="text-3xl">📋</span>
+                Checklist luyện tập
+              </h2>
+              <p className="text-muted-foreground mt-1">Giữ nhịp luyện tập đều đặn để tiến bộ rõ rệt.</p>
             </div>
-          ))}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">{checkedCount}/4</span>
+              <div className="w-24 h-2 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all duration-300"
+                  style={{ width: `${(checkedCount / 4) * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {practiceChecklist.map((item) => (
+              <label
+                key={item.id}
+                className={cn(
+                  'flex items-center gap-4 p-4 rounded-lg border cursor-pointer transition-all hover:bg-muted/50',
+                  checklist[item.id] ? 'border-primary bg-primary/5' : 'border-border'
+                )}
+              >
+                <input
+                  type="checkbox"
+                  checked={checklist[item.id] || false}
+                  onChange={() => toggleChecklist(item.id)}
+                  className="sr-only"
+                />
+                <div
+                  className={cn(
+                    'w-6 h-6 rounded border-2 flex items-center justify-center shrink-0 transition-colors',
+                    checklist[item.id] ? 'bg-primary border-primary text-primary-foreground' : 'border-muted-foreground'
+                  )}
+                >
+                  {checklist[item.id] && <Check size={14} strokeWidth={3} />}
+                </div>
+                <div className="flex items-center gap-2">
+                  <item.icon size={18} className="text-muted-foreground shrink-0" />
+                  <span className="font-medium text-sm">{item.label}</span>
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Địa chỉ mua sắm + Tài nguyên */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="rounded-xl border-2 border-primary/30 bg-card p-6 space-y-3">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <MapPin size={20} />
+              Địa chỉ mua sắm & Shopping guide
+            </h2>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{shoppingText}</p>
+          </div>
+          <div className="rounded-xl border-2 border-accent/30 bg-card p-6 space-y-3">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <BookOpen size={20} />
+              Tài nguyên & nơi học tập
+            </h2>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{resourcesText}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Sự kiện & fanpage âm nhạc */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="rounded-xl border border-border bg-card p-6 sm:p-8 space-y-6">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <Mic2 size={20} />
+              Sự kiện & cơ hội biểu diễn
+            </h2>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{eventsText}</p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-3">
+            <a
+              href="https://www.facebook.com/share/16rc5CxUB9/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg border border-border bg-background p-4 hover:border-primary/50 hover:bg-muted/40 transition-colors"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-semibold">Fanpage hoạt động âm nhạc</p>
+                  <p className="text-xs text-muted-foreground">facebook.com</p>
+                </div>
+                <ExternalLink size={16} className="text-primary shrink-0" />
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Facts */}
+      <section className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-y border-border py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold mb-8 text-center">Thông tin nhanh</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+              <div className="text-3xl font-bold text-primary mb-2">15-30p</div>
+              <p className="text-sm text-muted-foreground">Thời gian luyện tập mỗi ngày</p>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-accent mb-2">Nhiều CLB</div>
+              <p className="text-sm text-muted-foreground">Guitar, Vocal, Band, DJ...</p>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-primary mb-2">Open Mic</div>
+              <p className="text-sm text-muted-foreground">Sân chơi định kỳ</p>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-accent mb-2">Festival</div>
+              <p className="text-sm text-muted-foreground">Sự kiện âm nhạc lớn trong năm</p>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="relative rounded-xl border border-border overflow-hidden bg-gradient-to-br from-accent/5 to-primary/5 p-8 sm:p-12 text-center space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold">Sẵn Sàng Bắt Đầu?</h2>
-          <p className="text-muted-foreground">
-            Hãy tham gia một CLB âm nhạc hoặc liên hệ để biết thêm thông tin chi tiết!
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-primary to-primary/80 p-8 sm:p-12 text-center space-y-6 text-primary-foreground">
+          <h2 className="text-2xl sm:text-3xl font-bold">Sẵn sàng bắt đầu?</h2>
+          <p className="text-primary-foreground/90">
+            Hãy tham gia một CLB âm nhạc hoặc hỏi FPTU Assistant nếu bạn còn băn khoăn.
           </p>
           <Link href="/assistant">
-            <Button className="gap-2">
-              Hỏi AI Assistant
+            <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+              Chat với FPTU Assistant
             </Button>
           </Link>
         </div>

@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ChevronDown, BookOpen, Award, TrendingUp, Zap } from 'lucide-react'
+import { ChevronDown, BookOpen, Award, TrendingUp, Zap, ExternalLink } from 'lucide-react'
 
 export default function EnglishLearningPage() {
   const [expandedSection, setExpandedSection] = React.useState<string | null>('placement')
@@ -317,6 +317,38 @@ Lập Nhóm Học Tập:
           <div className="space-y-3">
             <h2 className="text-3xl sm:text-4xl font-bold">🌍 LUK Global: 100% English - 100% Experience</h2>
             <p className="text-muted-foreground">Hành trình phát triển kỹ năng tiếng Anh qua 4 cấp độ</p>
+          </div>
+
+          {/* Links fanpage LUK Global (người dùng cung cấp) */}
+          <div className="grid sm:grid-cols-2 gap-3">
+            <a
+              href="https://www.facebook.com/LUKglobalDanang?locale=vi_VN"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg border border-border bg-card p-4 hover:border-primary/50 hover:bg-muted/30 transition-colors"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-semibold">Fanpage LUK Global (Da Nang)</p>
+                  <p className="text-xs text-muted-foreground">facebook.com</p>
+                </div>
+                <ExternalLink size={16} className="text-primary shrink-0" />
+              </div>
+            </a>
+            <a
+              href="https://www.facebook.com/share/1CJ27Sy1XQ/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-lg border border-border bg-card p-4 hover:border-primary/50 hover:bg-muted/30 transition-colors"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="font-semibold">Fanpage LUK Global (share link)</p>
+                  <p className="text-xs text-muted-foreground">facebook.com</p>
+                </div>
+                <ExternalLink size={16} className="text-primary shrink-0" />
+              </div>
+            </a>
           </div>
 
           {/* Timeline of Levels */}
