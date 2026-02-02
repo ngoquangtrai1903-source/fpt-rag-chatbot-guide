@@ -3,453 +3,403 @@
 import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ChevronDown } from 'lucide-react'
+import {
+  Building2,
+  Home,
+  Footprints,
+  Shield,
+  Wallet,
+  Users,
+  Sparkles,
+  Check,
+  MapPin,
+  Wifi,
+  Zap,
+  ExternalLink,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+// Comparison data: KTX vs Trọ ngoài
+const comparisonData = [
+  {
+    criteria: 'Khoảng cách',
+    ktx: { text: '2 phút đi bộ', icon: Footprints },
+    tro: { text: '5-10 phút xe máy', icon: MapPin },
+  },
+  {
+    criteria: 'Tiện ích',
+    ktx: { text: 'Có sẵn, An ninh 24/7', icon: Shield },
+    tro: { text: 'Tự nấu ăn, Tự do', icon: Sparkles },
+  },
+  {
+    criteria: 'Chi phí',
+    ktx: { text: 'Rẻ & Cố định', icon: Wallet },
+    tro: { text: 'Cao (Điện, Nước, Rác)', icon: Wallet },
+  },
+  {
+    criteria: 'Đặc điểm',
+    ktx: { text: 'Sinh hoạt tập thể', icon: Users },
+    tro: { text: 'Riêng tư tuyệt đối', icon: Home },
+  },
+]
+
+// Checklist for apartment hunting
+const checklistItems = [
+  { id: 'electric', label: 'Điện nước ổn định?', icon: Zap },
+  { id: 'wall', label: 'Tường thấm mốc?', icon: Building2 },
+  { id: 'lock', label: 'Cổng khóa vân tay?', icon: Shield },
+  { id: 'wifi', label: 'WiFi từng phòng?', icon: Wifi },
+]
+
+// Địa chỉ ăn uống - dữ liệu từ người dùng
+const foodPlaces = [
+  { name: 'Hoạ Mơ Coffee & Food', desc: 'Kết hợp cà phê và các món ăn, thuận tiện cho sinh viên vừa học vừa ăn', link: 'https://maps.app.goo.gl/eRGfHjXfdcEvFGeY8?g_st=ic' },
+  { name: 'Tiệm của Chuột', desc: 'Bún đậu và ăn vặt', link: 'https://maps.app.goo.gl/YU7YZ3fRycJ97dQ19?g_st=ic' },
+  { name: 'Quán Nở', desc: 'Bún, mì quảng, tạp hoá cho sinh viên', link: 'https://maps.app.goo.gl/Lnauj41RTB5BESJJ9?g_st=ic' },
+  { name: 'Mỳ Quảng 37', desc: '', link: 'https://maps.app.goo.gl/aqRHsY5RJyJphixR8?g_st=ic' },
+  { name: 'Bánh mì chảo OHA', desc: 'Bánh mì chảo đặc biệt và xôi', link: 'https://maps.app.goo.gl/X8N7bcT9hDfyoz1q6?g_st=ic' },
+  { name: 'Bánh cuốn nóng Hoa (04 Nguyễn Duy Cung)', desc: '', link: 'https://maps.app.goo.gl/pjVvk8PzhXhNx9Rf9?g_st=ic' },
+  { name: 'Trees Tea & Coffee', desc: 'Không gian rộng rãi, thoáng mát và yên tĩnh, phù hợp cho sinh viên học bài hoặc làm việc cá nhân trong thời gian dài', link: 'https://maps.app.goo.gl/Gvd7DfjZhNb7UXBE6?g_st=ic' },
+  { name: 'Nốt Coffee', desc: 'Vị trí thuận tiện, dễ dàng di chuyển giữa các ca học, phù hợp cho những buổi học nhanh hoặc làm việc ngắn', link: 'https://maps.app.goo.gl/W6cLtm8MMUPnQkPSA?g_st=ic' },
+  { name: 'Dailly Coffee', desc: 'Thiết kế hiện đại, không gian sáng, phù hợp cho học nhóm và làm việc', link: 'https://maps.app.goo.gl/MvzwgAiJmhhGkba49?g_st=ic' },
+  { name: 'Oxy Garden Coffee', desc: 'Không gian xanh, view đẹp, tạo cảm giác thư giãn nhưng vẫn đảm bảo sự tập trung', link: 'https://maps.app.goo.gl/goFNNZheu9FMzscR7?g_st=ic' },
+  { name: 'Zone Six Cafe', desc: 'Quán hoạt động 24/7, có không gian riêng, thích hợp cho sinh viên học khuya hoặc làm việc ngoài giờ', link: 'https://maps.app.goo.gl/cEAFJjnNxxMb8U4V6?g_st=ic' },
+  { name: 'Camry Quán', desc: 'Địa điểm quen thuộc của sinh viên, phục vụ mì cay & ăn vặt với mức giá hợp lý, phù hợp cho bữa ăn nhanh', link: 'https://maps.app.goo.gl/qsv9TKbBvDxzFe1h6?g_st=ic' },
+  { name: 'Bếp của Nem', desc: 'Bánh mỳ chảo đặc biệt và các thức uống lành mạnh như nước ép hay sinh tố', link: 'https://maps.app.goo.gl/5RbnGXMHx83GUYzM7?g_st=ic' },
+  { name: 'Bún đậu 1996', desc: 'Bún đậu, mì cay và các món ăn vặt giá HSSV', link: 'https://maps.app.goo.gl/KXXjuSk4ERsYK4XA9?g_st=ic' },
+  { name: 'Hee Mang Chicken', desc: 'Gà rán và đa dạng các món ăn Hàn Quốc cho các bạn sinh viên lựa chọn', link: 'https://maps.app.goo.gl/XX8f4UmZsFGC4Zq16?g_st=ic' },
+  { name: 'Cơm tấm Sài Gòn', desc: '', link: 'https://maps.app.goo.gl/yPJUL5XsxwnJobx26?g_st=ic' },
+  { name: 'Ông Tèi - Hải Sản Bình Dân', desc: 'Quán nhậu gần FPT, giá hợp lý, view sông', link: 'https://maps.app.goo.gl/AKGh7aiHwjrmmAVV7?g_st=ic' },
+  { name: 'Tiệm Bánh Nhà Kim', desc: 'Chuyên bánh ngọt, bánh kem, ăn vặt', link: 'https://maps.app.goo.gl/CSDqVia4xMES7KRp8?g_st=ic' },
+  { name: 'SH FlowX (Coffee & Chill Workspace)', desc: 'Nhà sách, photocopy, cửa hàng tiện lợi kết hợp cafe và không gian làm việc, học tập', link: 'https://maps.app.goo.gl/oAUP6rhcFcGpu5xy9?g_st=ic' },
+  { name: 'Kem Bơ cô Vân', desc: 'Món tráng miệng nổi tiếng, giá rẻ, phù hợp với sinh viên', link: 'https://maps.app.goo.gl/9FG1yeHjJcBj4NXC9?g_st=ic' },
+]
 
 export default function StudentLifePage() {
-  const [expandedSection, setExpandedSection] = React.useState<string | null>('housing')
+  const [checklist, setChecklist] = React.useState<Record<string, boolean>>({})
+  const [showSuitability, setShowSuitability] = React.useState<'ktx' | 'tro' | null>(null)
+  const [hoveredTip, setHoveredTip] = React.useState(false)
 
-  const sections = [
-    {
-      id: 'housing',
-      title: 'Housing & Dormitories',
-      icon: '🏠',
-      content: `FPTU offers on-campus housing for most first-year students.
+  const toggleChecklist = (id: string) => {
+    setChecklist((prev) => ({ ...prev, [id]: !prev[id] }))
+  }
 
-Available Dormitories:
-• A Dormitory - Newest, renovated (best reputation)
-• B Dormitory - Near library and study areas
-• C Dormitory - Center of campus
-• D Dormitory - Quieter area
-• E Dormitory - Close to sports complex
-
-Room Types:
-• Double rooms (most common for first-years)
-• Triple rooms (some available)
-• Single rooms (limited, harder to get)
-
-Typical Room Features:
-• 2-3 beds with mattresses
-• Individual study desks
-• Shared bathroom (1-2 bathrooms per 6-8 students)
-• Air conditioning (some dorms)
-• Good internet connection
-• Windows and natural light
-
-Cost & Housing:
-• Dormitory fee: ~3-5 million VND per year
-• Paid through semester tuition
-• Housing application in summer
-• Room assignments made by administration
-• Room requests submitted but not always granted
-
-Housing Tips:
-1. Apply early for housing assignment
-2. Research different dorms online (student reviews)
-3. Be ready to be flexible with roommates
-4. Keep dorm rooms clean (inspections monthly)
-5. Respect quiet hours (usually 10 PM - 6 AM)
-6. Build good relationships with roommates
-
-Dorm Rules:
-• No loud music after 10 PM
-• No cooking in rooms
-• No overnight guests without permission
-• Keep rooms clean and safe
-• Use communal kitchens if available
-• Respect privacy of roommates
-• Report maintenance issues immediately`
-    },
-    {
-      id: 'dining',
-      title: 'Food & Dining Options',
-      icon: '🍽️',
-      content: `Multiple dining options available on campus:
-
-Main Dining Hall:
-• Buffet-style meals
-• Breakfast: 6:30-8:30 AM (30,000-50,000 VND)
-• Lunch: 11:00 AM-1:30 PM (60,000-100,000 VND)
-• Dinner: 4:30-7:00 PM (60,000-100,000 VND)
-• Meal card available (discounted monthly pass)
-
-Food Courts & Cafés:
-• Building A Cafe - Western and Vietnamese food
-• Building C Food Court - Pho, bánh mỳ, noodles
-• Student Center Cafe - Coffee, snacks, desserts
-• Library Cafe - Quiet spot for studying
-• Various food stalls around campus
-
-Popular Local Dishes & Prices:
-• Phở (noodle soup) - 40,000-60,000 VND
-• Bánh mỳ (Vietnamese sandwich) - 30,000-50,000 VND
-• Cơm tấm (broken rice) - 50,000-80,000 VND
-• Spring rolls - 30,000-40,000 VND
-• Iced coffee - 20,000-30,000 VND
-
-Budget Tips:
-• Meal plans save 10-20% compared to daily purchases
-• Eat at lunch (cheaper than dinner)
-• Buy snacks from local shops (cheaper than campus)
-• Cook in dorm kitchen if available
-• Split costs with friends
-• Budget ~200,000-300,000 VND per week for food
-
-Dietary Needs:
-• Vegetarian options available
-• Request religious accommodations
-• Allergy-friendly meals upon request
-• Halal options available
-• Talk to dining hall manager about special needs
-
-Tips:
-• Bring reusable containers for discounts
-• Eat with friends to share tables
-• Try new foods and explore local flavors
-• Support on-campus vendors
-• Check for special events and themed meals`
-    },
-    {
-      id: 'transport',
-      title: 'Transportation & Getting Around',
-      icon: '🚌',
-      content: `Getting around Da Nang and to/from FPTU:
-
-Campus Transportation:
-• Campus is walkable (most areas within 15 min walk)
-• Bicycle racks available throughout
-• Electric scooter rentals on campus
-• Campus shuttle for far locations (free for students)
-
-Public Transportation in Da Nang:
-• Buses - Cheap but crowded
-• Cost: 10,000-20,000 VND per trip
-• Bus routes #1, #4, #7 pass by campus
-• Download DaNangBus app for schedules
-
-Taxis & Ride-Sharing:
-• Grab app - Most popular ride-sharing
-• Taxi companies - Reliable but more expensive
-• Estimate cost: 50,000-150,000 VND for short trips
-• Always use official apps for safety
-
-Motorcycles & Scooters:
-• Many students rent bikes
-• Rental: 50,000-100,000 VND per day
-• Helmet is mandatory (legally & safety)
-• Lock your bike securely
-• Insurance recommended
-
-Bikes & Bicycles:
-• Great for on-campus commuting
-• Rental shops near campus: 30,000-60,000 VND/day
-• Many students buy cheap bikes (500k-1M VND)
-• Bike-sharing programs available
-
-Getting Around Campus:
-• Map app of campus available online
-• Ask senior students for directions
-• Most buildings clearly labeled
-• Campus is well-maintained
-• Walking is the primary method
-
-Popular Destinations from FPTU:
-• Da Nang City Center - 15-20 min by bus
-• My Khe Beach - 10-15 min by bike
-• Hoi An (nearby) - 1 hour by bus
-• Mountains - Good day trip options
-• Local shops and restaurants - Walking distance
-
-Transportation Budget:
-• Monthly pass (bus): 200,000 VND
-• Bike rental (if no purchase): 1.5-2M VND/month
-• Grab rides (occasional): 200,000-300,000 VND/month
-• Total monthly: 200k-2M VND depending on choices`
-    },
-    {
-      id: 'campus',
-      title: 'Campus Map & Important Locations',
-      icon: '🗺️',
-      content: `Key Locations at FPTU:
-
-Administrative Buildings:
-• Building A - Main Administration & Admissions
-• Building B - Academic Affairs
-• Building C - Student Services & Health Center
-• Building D - Registrar Office
-
-Academic Buildings:
-• Engineering Building - Engineering & Tech programs
-• Business Building - Business & Management
-• Architecture Building - Design & Architecture
-• Language Building - Foreign Language Center
-
-Facilities:
-• Library (Central) - 3 floors, study areas, computers
-• Computer Labs - Multiple locations for IT work
-• Science Labs - Chemistry, Physics, Biology labs
-• Design Studios - Graphics & Architecture workspace
-
-Student Life:
-• Student Center - Cafe, events, clubs
-• Sports Complex - Gym, basketball, badminton
-• Football Field - Athletics training
-• Swimming Pool - Sports activities
-
-Dining & Food:
-• Main Dining Hall - Central location
-• Food Courts - Multiple locations
-• Cafes - Throughout campus
-• Convenience Stores - Various spots
-
-Health & Support:
-• Student Health Center - Basic medical care
-• Counseling Office - Mental health support
-• International Student Office - Support services
-• Academic Advising - Study help
-
-Outdoor Spaces:
-• Central Garden - Relaxation area
-• Study Pavilions - Outdoor seating
-• Green Spaces - Parks throughout campus
-• Walking Paths - Connect different areas
-
-Tech Support:
-• IT Help Desk - Building A basement
-• Computer Lab Support - Various labs
-• Network Issues - Contact IT office
-• Phone: +84-236-XXXX
-
-Important Tips:
-1. Get a physical campus map
-2. Explore campus in first weeks
-3. Know building locations for classes
-4. Mark important office locations
-5. Join campus tours in orientation
-6. Ask for directions - students are helpful
-7. Download campus app if available`
-    },
-    {
-      id: 'activities',
-      title: 'Student Activities & Clubs',
-      icon: '🎉',
-      content: `FPTU has a vibrant student life with many clubs and activities:
-
-Academic Clubs:
-• Computer Science Club - Programming and tech
-• Robotics Club - Building and programming robots
-• Entrepreneurship Club - Business and startup focus
-• Photography Club - Photography skills and exhibitions
-• Debate Club - Speaking and argumentation
-
-Arts & Cultural Clubs:
-• Music Club (various sub-clubs)
-• Dance Club - Modern and traditional
-• Theater Club - Drama and performances
-• Art Club - Painting, sculpture, design
-• Traditional Culture Club - Vietnamese traditions
-
-Sports Clubs:
-• Basketball Club
-• Football Club
-• Badminton Club
-• Volleyball Club
-• Table Tennis Club
-• Swimming Club
-• Running Club
-
-Service & Leadership:
-• Student Government Association
-• Volunteer Club - Community service
-• Environmental Club - Sustainability efforts
-• International Student Association
-• Mentoring Program - Help younger students
-
-Interest-Based:
-• Gaming Club - Esports and game development
-• Anime & Manga Club
-• Board Game Club
-• Cooking Club
-• Travel Club - Plan trips together
-• Green Tea Club - Social gathering
-
-How to Join:
-1. Attend Club Fair (September)
-2. Visit club booths and tables
-3. Sign up and get contact info
-4. Attend first meeting
-5. Most clubs are FREE to join
-6. Can join multiple clubs
-
-Benefits of Joining:
-• Make new friends with shared interests
-• Develop new skills
-• Improve your CV
-• Have fun outside of classes
-• Network with like-minded people
-• Represent FPTU in competitions
-• Plan and organize events
-
-Event Calendar:
-• September - Club Fair & orientation events
-• Monthly - Club meetings and activities
-• October - Opening ceremonies
-• November - Sports competitions
-• December - Year-end parties and concerts
-• January - Reflection and planning
-• Throughout Year - Various tournaments and exhibitions`
-    },
-    {
-      id: 'money',
-      title: 'Money Management & Budgeting',
-      icon: '💰',
-      content: `Smart financial management as a student:
-
-Monthly Budget Breakdown (Average):
-• Accommodation: 500k-1.5M VND (included in tuition)
-• Food: 2-3M VND (varies by preferences)
-• Transportation: 200k-1M VND
-• Entertainment: 500k-1M VND
-• Study materials: 200k-500k VND
-• Miscellaneous: 200k-500k VND
-• TOTAL: 3.6-6.5M VND per month
-
-Financial Aid & Support:
-• Merit-based scholarships available
-• Need-based financial aid
-• Work-study programs on campus
-• Part-time job opportunities
-• Apply through Student Services office
-
-Part-Time Job Opportunities:
-• Campus jobs (library, labs, admin) - 100k-150k VND/week
-• Tutoring (especially English) - 150k-300k VND/hour
-• Freelance work (design, writing) - Varies
-• Food delivery apps - 50k-100k VND/day
-• Retail or hospitality - 3-4M VND/month
-• Teaching English at local centers - 5-7M VND/month
-
-Banking in Vietnam:
-• Open a student bank account (free)
-• Vietcombank, Techcombank popular
-• Mobile banking app for transfers
-• No hidden fees typically
-• Can receive remittances from family
-
-Money-Saving Tips:
-1. Use public transportation (cheaper than Grab)
-2. Eat at campus dining (cheaper than outside)
-3. Buy books used or borrow from library
-4. Use student discounts (many shops offer them)
-5. Cook with roommates to split costs
-6. Share subscriptions and services
-7. Buy supplies in bulk with friends
-8. Avoid unnecessary shopping and impulse buys
-
-Payment Methods:
-• Cash - Still widely used in Vietnam
-• Debit/Credit cards - Accepted at most places
-• Mobile payment apps - Momo, Zalo Pay, GCash
-• Bank transfers - For rent and tuition
-• ATMs - Withdraw cash (small fee)
-
-Tuition & Fee Information:
-• Tuition: 50-80M VND per year (varies by major)
-• Paid by semester
-• Dorm fee: Included in overall cost
-• Installment plans available
-• Apply for scholarship/aid early
-
-Financial Planning:
-• Track your spending monthly
-• Set a budget and stick to it
-• Save for emergencies
-• Reduce unnecessary expenses
-• Plan for special events/travel
-• Consider your future (textbooks, senior year)`
-    },
-  ]
+  const checkedCount = Object.values(checklist).filter(Boolean).length
+  const totalChecklist = checklistItems.length
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
       {/* Back Navigation */}
       <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <Link href="/knowledge-base" className="text-primary hover:underline flex items-center gap-2 text-sm">
-            ← Back to Knowledge Base
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <Link
+            href="/knowledge-base"
+            className="text-primary hover:underline flex items-center gap-2 text-sm font-medium"
+          >
+            ← Quay lại Knowledge Base
           </Link>
         </div>
       </div>
 
       {/* Header */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="space-y-4">
-          <span className="text-5xl">🏫</span>
-          <h1 className="text-4xl sm:text-5xl font-bold">Student Life Guide</h1>
-          <p className="text-lg text-muted-foreground">
-            Everything you need to know about living, studying, and thriving at FPTU.
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
+            <Building2 size={18} />
+            Chương 4 - An cư & Lạc nghiệp
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-bold text-foreground">
+            Student Life Guide
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl">
+            Mọi thứ bạn cần biết về chỗ ở, ẩm thực và sinh hoạt quanh khu vực FPT University.
           </p>
         </div>
       </section>
 
-      {/* Content Sections */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-20">
-        <div className="space-y-4">
-          {sections.map((section) => (
-            <div key={section.id} className="border border-border rounded-lg bg-card overflow-hidden">
-              <button
-                onClick={() => setExpandedSection(expandedSection === section.id ? null : section.id)}
-                className="w-full p-6 flex items-center justify-between hover:bg-card/80 transition-colors"
-              >
-                <div className="flex items-center gap-4 text-left">
-                  <span className="text-3xl">{section.icon}</span>
-                  <h2 className="text-xl font-bold">{section.title}</h2>
-                </div>
-                <ChevronDown
-                  size={20}
-                  className={`transition-transform ${expandedSection === section.id ? 'rotate-180' : ''}`}
-                />
-              </button>
-              {expandedSection === section.id && (
-                <div className="px-6 pb-6 pt-0 border-t border-border whitespace-pre-wrap text-muted-foreground leading-relaxed">
-                  {section.content}
-                </div>
+      {/* A. Comparison Slider: KTX vs Trọ ngoài */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <span className="text-3xl">⚖️</span>
+              KTX vs. Thuê trọ ngoài
+            </h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setShowSuitability(
+                  showSuitability === null ? 'ktx' : showSuitability === 'ktx' ? 'tro' : null
+                )
+              }
+              className="border-primary/50 text-primary hover:bg-primary/10"
+            >
+              {showSuitability === null
+                ? 'Phù hợp với ai?'
+                : showSuitability === 'ktx'
+                  ? '→ Xem Trọ (Cựu binh)'
+                  : 'Đóng'}
+            </Button>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {/* KTX Card */}
+            <div
+              className={cn(
+                'rounded-xl border-2 p-6 transition-all duration-300',
+                showSuitability === 'ktx'
+                  ? 'border-primary bg-primary/5 shadow-lg scale-[1.02]'
+                  : showSuitability === 'tro'
+                    ? 'border-border opacity-75'
+                    : 'border-primary/30 bg-card hover:border-primary/50'
               )}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <Building2 className="text-primary" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold">Ký túc xá (KTX)</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {showSuitability === 'ktx' && (
+                      <span className="text-primary font-medium">→ Dành cho Tân binh</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                {comparisonData.map((row) => (
+                  <div key={row.criteria} className="flex items-start gap-3">
+                    <span className="text-sm font-medium text-muted-foreground w-24 shrink-0">
+                      {row.criteria}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <row.ktx.icon size={16} className="text-primary shrink-0" />
+                      <span>{row.ktx.text}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+
+            {/* Trọ ngoài Card */}
+            <div
+              className={cn(
+                'rounded-xl border-2 p-6 transition-all duration-300',
+                showSuitability === 'tro'
+                  ? 'border-accent bg-accent/5 shadow-lg scale-[1.02]'
+                  : showSuitability === 'ktx'
+                    ? 'border-border opacity-75'
+                    : 'border-accent/30 bg-card hover:border-accent/50'
+              )}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-lg bg-accent/20 flex items-center justify-center">
+                  <Home className="text-accent" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold">Thuê trọ ngoài</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {showSuitability === 'tro' && (
+                      <span className="text-accent font-medium">→ Dành cho Cựu binh</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                {comparisonData.map((row) => (
+                  <div key={row.criteria} className="flex items-start gap-3">
+                    <span className="text-sm font-medium text-muted-foreground w-24 shrink-0">
+                      {row.criteria}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <row.tro.icon size={16} className="text-accent shrink-0" />
+                      <span>{row.tro.text}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
+      {/* B. Tân binh tìm trọ Checklist */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="rounded-xl border border-border bg-card p-6 sm:p-8 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                <span className="text-3xl">📋</span>
+                Checklist Tân binh tìm trọ
+              </h2>
+              <p className="text-muted-foreground mt-1">
+                Mang theo khi đi xem phòng - Ưu tiên bán kính 1-2km, kiểm tra an ninh & chi phí ẩn
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">
+                {checkedCount}/{totalChecklist} đã kiểm tra
+              </span>
+              <div className="w-24 h-2 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all duration-300"
+                  style={{ width: `${(checkedCount / totalChecklist) * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4 mb-6">
+            {checklistItems.map((item) => (
+              <label
+                key={item.id}
+                className={cn(
+                  'flex items-center gap-4 p-4 rounded-lg border cursor-pointer transition-all hover:bg-muted/50',
+                  checklist[item.id] ? 'border-primary bg-primary/5' : 'border-border'
+                )}
+              >
+                <input
+                  type="checkbox"
+                  checked={checklist[item.id] || false}
+                  onChange={() => toggleChecklist(item.id)}
+                  className="sr-only"
+                />
+                <div
+                  className={cn(
+                    'w-6 h-6 rounded border-2 flex items-center justify-center shrink-0 transition-colors',
+                    checklist[item.id]
+                      ? 'bg-primary border-primary text-primary-foreground'
+                      : 'border-muted-foreground'
+                  )}
+                >
+                  {checklist[item.id] && <Check size={14} strokeWidth={3} />}
+                </div>
+                <div className="flex items-center gap-2">
+                  <item.icon size={18} className="text-muted-foreground shrink-0" />
+                  <span className="font-medium">{item.label}</span>
+                </div>
+              </label>
+            ))}
+          </div>
+
+          {/* Tooltip - Mẹo hay */}
+          <div
+            className="relative inline-block"
+            onMouseEnter={() => setHoveredTip(true)}
+            onMouseLeave={() => setHoveredTip(false)}
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent cursor-help hover:bg-accent/20 transition-colors">
+              <Sparkles size={18} />
+              <span className="font-medium">Mẹo hay</span>
+            </div>
+            {hoveredTip && (
+              <div className="absolute left-0 top-full mt-2 z-50 p-4 rounded-lg bg-popover border border-border shadow-xl max-w-sm">
+                <p className="text-sm">
+                  Hãy xem phòng vào <strong>buổi trưa</strong> để biết độ nóng và{' '}
+                  <strong>buổi chiều mưa</strong> để biết độ ngập!
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* C. Địa chỉ ăn uống - Mục nhỏ trong Student Life */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <span className="text-3xl">🍜</span>
+            Địa chỉ ăn uống quanh FPT
+          </h2>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {foodPlaces.map((place) => (
+              <div
+                key={place.name}
+                className="rounded-xl border-2 border-primary/20 bg-card p-4 transition-all hover:shadow-md hover:border-primary/40"
+              >
+                <h3 className="font-bold text-sm">{place.name}</h3>
+                {place.desc && (
+                  <p className="text-muted-foreground text-xs mt-1">{place.desc}</p>
+                )}
+                <a
+                  href={place.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 mt-2 text-sm font-medium text-primary hover:underline"
+                >
+                  <MapPin size={14} />
+                  Xem bản đồ
+                  <ExternalLink size={12} />
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Kinh nghiệm thuê trọ - Collapsible */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <details className="group rounded-xl border border-border bg-card overflow-hidden">
+          <summary className="flex items-center justify-between p-6 cursor-pointer list-none hover:bg-muted/50 transition-colors">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <span className="text-2xl">📚</span>
+              Kinh nghiệm thuê trọ
+            </h2>
+            <span className="text-muted-foreground group-open:rotate-180 transition-transform">
+              ▼
+            </span>
+          </summary>
+          <div className="px-6 pb-6 pt-0 border-t border-border">
+            <ul className="text-sm text-muted-foreground space-y-1 mt-6">
+              <li>• Ưu tiên bán kính 1-2km từ trường</li>
+              <li>• Kiểm tra an ninh & chi phí ẩn (điện, nước, rác)</li>
+              <li>• Ký hợp đồng rõ ràng, đọc kỹ điều khoản</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+
       {/* Quick Facts */}
-      <section className="bg-card/50 border-y border-border py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold mb-8 text-center">Quick Facts</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
+      <section className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-y border-border py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold mb-8 text-center">Thông tin nhanh</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <div className="text-3xl font-bold text-primary mb-2">5K+</div>
-              <p className="text-sm text-muted-foreground">First-Year Students</p>
+              <div className="text-3xl font-bold text-primary mb-2">2 phút</div>
+              <p className="text-sm text-muted-foreground">KTX → Trường</p>
             </div>
             <div>
-              <div className="text-3xl font-bold text-accent mb-2">50+</div>
-              <p className="text-sm text-muted-foreground">Active Clubs</p>
+              <div className="text-3xl font-bold text-accent mb-2">1-2km</div>
+              <p className="text-sm text-muted-foreground">Bán kính thuê trọ lý tưởng</p>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary mb-2">3.6-6.5M</div>
-              <p className="text-sm text-muted-foreground">VND Monthly Budget</p>
+              <div className="text-3xl font-bold text-primary mb-2">Ngon-Bổ-Rẻ</div>
+              <p className="text-sm text-muted-foreground">Tiêu chí ẩm thực</p>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-accent mb-2">Trần Đại Nghĩa</div>
+              <p className="text-sm text-muted-foreground">Trục đường ẩm thực</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="relative rounded-xl border border-border overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 p-8 sm:p-12 text-center space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold">Ready to Start Your Journey?</h2>
-          <p className="text-muted-foreground">
-            Have specific questions about campus life? Get personalized advice from our AI assistant.
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="relative rounded-xl overflow-hidden bg-gradient-to-br from-primary to-primary/80 p-8 sm:p-12 text-center space-y-6 text-primary-foreground">
+          <h2 className="text-2xl sm:text-3xl font-bold">Còn thắc mắc?</h2>
+          <p className="text-primary-foreground/90">
+            Hỏi FPTU Assistant để nhận lời khuyên từ tiền bối & cựu sinh viên.
           </p>
           <Link href="/assistant">
-            <Button className="gap-2">
-              Chat with FPTU Assistant
+            <Button
+              size="lg"
+              className="bg-primary-foreground text-primary hover:bg-primary-foreground/90"
+            >
+              Chat với FPTU Assistant
             </Button>
           </Link>
         </div>

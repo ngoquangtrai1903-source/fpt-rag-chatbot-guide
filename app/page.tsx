@@ -8,13 +8,6 @@ import { Button } from '@/components/ui/button'
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const navItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Knowledge Base', href: '/knowledge-base' },
-    { label: 'Community', href: '/community' },
-    { label: 'AI Assistant', href: '/assistant' },
-  ]
-
   const sections = [
     {
       title: 'English Learning Program',
@@ -51,6 +44,13 @@ export default function Home() {
       href: '/knowledge-base/student-life',
       color: 'from-green-500 to-green-600',
     },
+    {
+      title: 'Academic Mastery',
+      description: 'FAP, FLM, SEB, EOS & study habits',
+      icon: '🎓',
+      href: '/knowledge-base/academic-mastery',
+      color: 'from-orange-500 to-orange-600',
+    },
   ]
 
   const recentUpdates = [
@@ -62,72 +62,26 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-sm">
-                F
-              </div>
-              <span className="font-bold text-lg hidden sm:inline">FPTU Survival</span>
-            </div>
-
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center gap-1">
-              {navItems.map((item) => (
-                <Link key={item.href} href={item.href}>
-                  <Button variant="ghost" size="sm">
-                    {item.label}
-                  </Button>
-                </Link>
-              ))}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden pb-4 border-t border-border">
-              {navItems.map((item) => (
-                <Link key={item.href} href={item.href}>
-                  <Button variant="ghost" size="sm" className="w-full justify-start">
-                    {item.label}
-                  </Button>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </nav>
-
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
         <div className="text-center space-y-6">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-balance">
-            Welcome to FPTU <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Survival Guide</span>
+            Chào mừng đến với <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">FPTU Survival Guide</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-            Your complete resource hub for thriving as a first-year student at FPT University Da Nang. Access guides, connect with the community, and get instant help from our AI assistant.
+            Cẩm nang dành cho tân sinh viên FPT University Đà Nẵng. Xem hướng dẫn, kết nối cộng đồng và nhận hỗ trợ tức thì từ trợ lý AI.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/knowledge-base">
               <Button size="lg" className="gap-2">
                 <BookOpen size={20} />
-                Explore Guides
+                Xem Knowledge Base
               </Button>
             </Link>
             <Link href="/community">
               <Button size="lg" variant="outline" className="gap-2 bg-transparent">
                 <Users size={20} />
-                Join Community
+                Vào mục Cộng đồng
               </Button>
             </Link>
           </div>
