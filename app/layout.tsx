@@ -66,6 +66,11 @@ export default function RootLayout({
                     Cộng đồng
                   </Button>
                 </Link>
+                <Link href="/events">
+                  <Button variant="ghost" size="sm" className="px-2 sm:px-3">
+                    Events
+                  </Button>
+                </Link>
                 <Link href="/assistant">
                   <Button variant="ghost" size="sm" className="px-2 sm:px-3">
                     AI Assistant
