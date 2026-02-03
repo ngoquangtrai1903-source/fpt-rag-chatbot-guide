@@ -22,13 +22,22 @@ export default function VovinamPage() {
   ]
 
   const beltLevels = [
-    { level: 'Đai trắng', desc: 'Mới vào', color: 'bg-white border' },
-    { level: 'Đai vàng', desc: 'Nắm vững kỹ thuật cơ bản', color: 'bg-yellow-400' },
-    { level: 'Đai cam', desc: 'Nền tảng trung cấp', color: 'bg-orange-500' },
-    { level: 'Đai xanh', desc: 'Kỹ năng phát triển', color: 'bg-blue-500' },
-    { level: 'Đai xanh đậm', desc: 'Gần như thành thạo', color: 'bg-blue-700' },
-    { level: 'Đai nâu', desc: 'Sinh viên chuyên sâu', color: 'bg-amber-800' },
-    { level: 'Đai đen', desc: 'Huấn luyện viên', color: 'bg-gray-900' },
+    { level: 'Cấp 1', desc: 'Xanh dương', color: 'bg-blue-500' },
+    { level: 'Cấp 2', desc: 'Xanh dương 1 sọc vàng', color: 'bg-blue-500 relative' },
+    { level: 'Cấp 3', desc: 'Xanh dương 2 sọc vàng', color: 'bg-blue-500 relative' },
+    { level: 'Cấp 4', desc: 'Xanh dương 3 sọc vàng', color: 'bg-blue-500 relative' },
+    { level: 'Cấp 5', desc: 'Vàng', color: 'bg-yellow-400' },
+    { level: 'Cấp 6', desc: 'Vàng 1 sọc đỏ', color: 'bg-yellow-400 relative' },
+    { level: 'Cấp 7', desc: 'Vàng 2 sọc đỏ', color: 'bg-yellow-400 relative' },
+    { level: 'Cấp 8', desc: 'Vàng 3 sọc đỏ', color: 'bg-yellow-400 relative' },
+    { level: 'Cấp 9', desc: 'Đỏ', color: 'bg-red-500' },
+    { level: 'Cấp 10', desc: 'Đỏ 1 sọc trắng', color: 'bg-red-500 relative' },
+    { level: 'Cấp 11', desc: 'Đỏ 2 sọc trắng', color: 'bg-red-500 relative' },
+    { level: 'Cấp 12', desc: 'Đỏ 3 sọc trắng', color: 'bg-red-500 relative' },
+    { level: 'Cấp 13', desc: 'Đỏ 4 sọc trắng', color: 'bg-red-500 relative' },
+    { level: 'Cấp 14', desc: 'Đỏ 5 sọc trắng', color: 'bg-red-500 relative' },
+    { level: 'Cấp 15', desc: 'Đỏ 6 sọc trắng', color: 'bg-red-500 relative' },
+    { level: 'Danh dự', desc: 'Vàng trung tâm đỏ', color: 'bg-yellow-400 relative' },
   ]
 
   const scoringBreakdown = [
@@ -111,7 +120,27 @@ export default function VovinamPage() {
             <div className="space-y-2">
               {beltLevels.map((belt) => (
                 <div key={belt.level} className="flex items-center gap-3">
-                  <div className={cn('w-8 h-4 rounded shrink-0', belt.color)} />
+                  <div className="relative w-8 h-4 rounded shrink-0">
+                    <div className={cn('w-full h-full rounded', belt.color.split(' ')[0])} />
+                    {belt.desc.includes('sọc') && (
+                      <div className="absolute right-0 top-0 bottom-0 flex items-center">
+                        {belt.desc.includes('1 sọc') && <div className="w-1 h-full bg-yellow-400" />}
+                        {belt.desc.includes('2 sọc') && <><div className="w-1 h-full bg-yellow-400 mr-0.5" /><div className="w-1 h-full bg-yellow-400" /></>}
+                        {belt.desc.includes('3 sọc') && <><div className="w-1 h-full bg-yellow-400 mr-0.5" /><div className="w-1 h-full bg-yellow-400 mr-0.5" /><div className="w-1 h-full bg-yellow-400" /></>}
+                        {belt.desc.includes('4 sọc') && <><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white" /></>}
+                        {belt.desc.includes('5 sọc') && <><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white" /></>}
+                        {belt.desc.includes('6 sọc') && <><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white mr-0.5" /><div className="w-1 h-full bg-white" /></>}
+                        {belt.desc.includes('sọc đỏ') && (
+                          <>
+                            {belt.desc.includes('1 sọc') && <div className="w-1 h-full bg-red-500" />}
+                            {belt.desc.includes('2 sọc') && <><div className="w-1 h-full bg-red-500 mr-0.5" /><div className="w-1 h-full bg-red-500" /></>}
+                            {belt.desc.includes('3 sọc') && <><div className="w-1 h-full bg-red-500 mr-0.5" /><div className="w-1 h-full bg-red-500 mr-0.5" /><div className="w-1 h-full bg-red-500" /></>}
+                          </>
+                        )}
+                        {belt.desc.includes('trung tâm đỏ') && <div className="w-2 h-full bg-red-500" />}
+                      </div>
+                    )}
+                  </div>
                   <div>
                     <span className="font-medium text-sm">{belt.level}</span>
                     <p className="text-xs text-muted-foreground">{belt.desc}</p>
@@ -267,7 +296,7 @@ export default function VovinamPage() {
           <h2 className="text-2xl font-bold mb-8 text-center">Thông tin nhanh</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <div className="text-3xl font-bold text-primary mb-2">7</div>
+              <div className="text-3xl font-bold text-primary mb-2">16</div>
               <p className="text-sm text-muted-foreground">Cấp độ đai</p>
             </div>
             <div>
