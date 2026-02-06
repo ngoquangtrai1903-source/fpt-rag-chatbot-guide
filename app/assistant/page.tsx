@@ -47,7 +47,7 @@ export default function AssistantPage() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/community">
+              <Link href="/login">
                 <Button size="lg" className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white px-8 py-4 text-lg font-semibold shadow-lg">
                   Sign In to Chat
                   <ArrowRight size={20} className="ml-2" />

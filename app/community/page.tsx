@@ -75,7 +75,7 @@ export default function CommunityPage() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/knowledge-base">
+              <Link href="/login">
                 <Button size="lg" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-semibold shadow-lg">
                   Sign In to Join
                   <ArrowRight size={20} className="ml-2" />
