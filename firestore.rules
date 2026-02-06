@@ -1,0 +1,70 @@
+// ==================== FIRESTORE SECURITY RULES ====================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ==================== QUESTIONS COLLECTION ====================
+    
+    // Mọi người có thể đọc câu hỏi
+    match /questions/{questionId} {
+      allow read: true;
+      
+      // Chỉ user đã đăng nhập mới được tạo câu hỏi
+      allow create: if request.auth != null 
+        && request.auth.uid == resource.data.authorId
+        && request.auth.token.email_verified == true
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.details is string
+        && request.resource.data.details.size() > 0;
+      
+      // Chỉ author mới được cập nhật câu hỏi của mình
+      allow update: if request.auth != null 
+        && request.auth.uid == resource.data.authorId
+        && request.auth.token.email_verified == true;
+      
+      // Chỉ author mới được xóa câu hỏi của mình
+      allow delete: if request.auth != null 
+        && request.auth.uid == resource.data.authorId;
+    }
+    
+    // List questions - chỉ cho đọc
+    match /questions/{questionId} {
+      allow read: true;
+      allow list: true;
+    }
+    
+    // ==================== COMMENTS COLLECTION ====================
+    
+    // Mọi người có thể đọc bình luận
+    match /comments/{commentId} {
+      allow read: true;
+      
+      // Chỉ user đã đăng nhập mới được tạo bình luận
+      allow create: if request.auth != null 
+        && request.auth.token.email_verified == true
+        && request.resource.data.questionId is string
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0
+        && request.resource.data.content.size() < 1000;
+      
+      // Chỉ author mới được cập nhật bình luận của mình
+      allow update: if request.auth != null 
+        && request.auth.uid == resource.data.authorId
+        && request.auth.token.email_verified == true;
+      
+      // Chỉ author mới được xóa bình luận của mình
+      allow delete: if request.auth != null 
+        && request.auth.uid == resource.data.authorId;
+    }
+    
+    // ==================== INDEXES OPTIMIZATION ====================
+    
+    // Tối ưu query performance với composite indexes
+    // Cần tạo indexes trong Firestore Console cho:
+    // - questions: createdAt (desc)
+    // - comments: questionId + createdAt (asc)
+    // - questions: authorId + createdAt (desc)
+  }
+}

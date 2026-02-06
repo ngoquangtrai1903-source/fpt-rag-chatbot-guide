@@ -3,9 +3,12 @@
 import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, BookOpen } from 'lucide-react'
+import { ArrowRight, BookOpen, Lock, LogIn } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function KnowledgeBasePage() {
+  const { user } = useAuth()
+
   const guides = [
     {
       title: 'English Learning Program',
@@ -14,6 +17,7 @@ export default function KnowledgeBasePage() {
       href: '/knowledge-base/english-learning',
       sections: ['Placement Test', 'Course Levels', 'Study Tips', 'Resources'],
       color: 'from-orange-400 to-orange-500',
+      requiresAuth: true
     },
     {
       title: 'Vovinam Guide',
@@ -22,14 +26,16 @@ export default function KnowledgeBasePage() {
       href: '/knowledge-base/vovinam',
       sections: ['Belt System', 'Techniques', 'Training Schedule', 'FAQ'],
       color: 'from-orange-500 to-orange-600',
+      requiresAuth: true
     },
     {
       title: 'Music & Arts',
       description: 'Explore cultural and musical traditions. Discover music clubs, instruments, and cultural events.',
       icon: '🎵',
       href: '/knowledge-base/music',
-      sections: ['Music Clubs', 'Events', 'Instruments', 'Performances'],
+      sections: ['Music Clubs', 'Instruments', 'Cultural Events', 'Performances'],
       color: 'from-orange-600 to-orange-700',
+      requiresAuth: true
     },
     {
       title: 'Military Training',
@@ -38,6 +44,7 @@ export default function KnowledgeBasePage() {
       href: '/knowledge-base/military',
       sections: ['Overview', 'Schedule', 'Physical Tests', 'Tips & Tricks'],
       color: 'from-orange-700 to-orange-800',
+      requiresAuth: true
     },
     {
       title: 'Student Life',
@@ -46,6 +53,7 @@ export default function KnowledgeBasePage() {
       href: '/knowledge-base/student-life',
       sections: ['Housing', 'Dining', 'Transportation', 'Campus Map'],
       color: 'from-amber-600 to-orange-600',
+      requiresAuth: true
     },
     {
       title: 'Academic Mastery',
@@ -54,20 +62,19 @@ export default function KnowledgeBasePage() {
       href: '/knowledge-base/academic-mastery',
       sections: ['The Big 4', 'Study Habits', 'Exam Tips'],
       color: 'from-amber-500 to-orange-500',
+      requiresAuth: true
     },
   ]
 
+  const handleGuideClick = (e: React.MouseEvent, requiresAuth: boolean) => {
+    if (requiresAuth && !user) {
+      e.preventDefault()
+      alert('Bạn cần đăng nhập để khám phá nội dung chi tiết!')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-orange-50/20 to-orange-100/10">
-      {/* Back Navigation */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <Link href="/" className="text-primary hover:underline flex items-center gap-2 text-sm">
-            ← Back to Home
-          </Link>
-        </div>
-      </div>
-
       {/* Header */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="space-y-6">
@@ -80,6 +87,19 @@ export default function KnowledgeBasePage() {
           <p className="text-lg text-muted-foreground max-w-2xl">
             Comprehensive guides covering all aspects of student life at FPTU. Find answers to common questions and learn from experienced students.
           </p>
+          {!user && (
+            <div className="bg-gradient-to-r from-orange-100 via-orange-50 to-orange-100 border-2 border-orange-200 rounded-2xl p-6 shadow-lg">
+              <div className="flex items-center gap-3 text-orange-800">
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center">
+                  <Lock size={18} className="text-white" />
+                </div>
+                <div className="text-left">
+                  <div className="font-semibold text-lg">Đăng nhập để khám phá</div>
+                  <div className="text-sm opacity-80">Truy cập tất cả nội dung chi tiết và hướng dẫn</div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -99,23 +119,38 @@ export default function KnowledgeBasePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-20">
         <div className="grid md:grid-cols-2 gap-6">
           {guides.map((guide) => (
-            <Link key={guide.href} href={guide.href}>
-              <div className="group h-full p-6 rounded-xl border-2 border-orange-200/50 bg-gradient-to-br from-orange-50/50 to-orange-100/30 hover:border-orange-400 hover:shadow-lg hover:from-orange-100/50 hover:to-orange-200/40 transition-all cursor-pointer">
-                <div className="flex items-start justify-between mb-4">
-                  <span className="text-5xl drop-shadow-sm">{guide.icon}</span>
-                  <ArrowRight size={20} className="text-orange-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+            <div key={guide.href} className="group relative">
+              <Link href={guide.href}>
+                <div 
+                  className="group h-full p-6 rounded-xl border-2 border-orange-200/50 bg-gradient-to-br from-orange-50/50 to-orange-100/30 hover:border-orange-400 hover:shadow-lg hover:from-orange-100/50 hover:to-orange-200/40 transition-all cursor-pointer"
+                  onClick={(e) => handleGuideClick(e, guide.requiresAuth)}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="relative">
+                      <span className="text-5xl drop-shadow-sm">{guide.icon}</span>
+                      {guide.requiresAuth && !user && (
+                        <Lock size={16} className="absolute -top-2 -right-2 text-red-500 bg-white rounded-full p-1" />
+                      )}
+                    </div>
+                    <ArrowRight size={20} className="text-orange-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800 flex items-center gap-2">
+                    {guide.title}
+                    {guide.requiresAuth && !user && (
+                      <LogIn size={14} className="text-orange-500" />
+                    )}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4">{guide.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {guide.sections.map((section) => (
+                      <span key={section} className="text-xs px-3 py-1 rounded-full bg-gradient-to-r from-orange-200 to-orange-300 text-orange-800 font-medium border border-orange-300/50">
+                        {section}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-800">{guide.title}</h3>
-                <p className="text-gray-600 text-sm mb-4">{guide.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {guide.sections.map((section) => (
-                    <span key={section} className="text-xs px-3 py-1 rounded-full bg-gradient-to-r from-orange-200 to-orange-300 text-orange-800 font-medium border border-orange-300/50">
-                      {section}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
           ))}
         </div>
       </section>
@@ -123,11 +158,34 @@ export default function KnowledgeBasePage() {
       {/* CTA */}
       <section className="bg-gradient-to-r from-orange-100 to-orange-200 border-y-2 border-orange-300 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <h2 className="text-2xl font-bold text-gray-800">Can't find what you're looking for?</h2>
-          <p className="text-gray-600">Ask our AI assistant for personalized help</p>
-          <Link href="/assistant">
-            <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">Chat with AI Assistant</Button>
-          </Link>
+          <h2 className="text-2xl font-bold text-gray-800">
+            {user ? "Can't find what you're looking for?" : "Ready to explore more?"}
+          </h2>
+          <p className="text-gray-600">
+            {user ? "Ask our AI assistant for personalized help" : "Sign in to access all guides and get personalized help"}
+          </p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            {user ? (
+              <Link href="/assistant">
+                <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">
+                  Chat with AI Assistant
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/community">
+                  <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">
+                    Sign In to Explore
+                  </Button>
+                </Link>
+                <Link href="/assistant">
+                  <Button variant="outline" className="border-orange-300 text-orange-600 hover:bg-orange-50">
+                    Try AI Assistant
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </section>
     </div>

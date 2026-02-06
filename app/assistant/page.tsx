@@ -5,9 +5,68 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
-import { Send, MessageCircle, Loader2 } from 'lucide-react'
+import { Send, MessageCircle, Loader2, Brain, Bot, ArrowRight, Users, Sparkles } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function AssistantPage() {
+  const { user } = useAuth()
+
+  // If not logged in, show auth prompt
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background via-purple-50/20 to-blue-100/10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center space-y-8">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full mb-6">
+              <Bot size={40} className="text-white" />
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900">
+              AI Assistant
+            </h1>
+            
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Get personalized help and guidance 24/7 from our intelligent AI assistant designed specifically for FPTU students.
+            </p>
+            
+            <div className="bg-purple-50 border-2 border-purple-200 rounded-xl p-8 max-w-md mx-auto">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 text-left">
+                  <Brain size={20} className="text-purple-500" />
+                  <span className="text-gray-700">Instant answers to your questions</span>
+                </div>
+                <div className="flex items-center gap-3 text-left">
+                  <Sparkles size={20} className="text-purple-500" />
+                  <span className="text-gray-700">Personalized study guidance</span>
+                </div>
+                <div className="flex items-center gap-3 text-left">
+                  <Bot size={20} className="text-purple-500" />
+                  <span className="text-gray-700">Available 24/7</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/community">
+                <Button size="lg" className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white px-8 py-4 text-lg font-semibold shadow-lg">
+                  Sign In to Chat
+                  <ArrowRight size={20} className="ml-2" />
+                </Button>
+              </Link>
+              <Link href="/knowledge-base">
+                <Button size="lg" variant="outline" className="border-2 border-purple-200 text-purple-600 hover:bg-purple-50 px-8 py-4 text-lg font-semibold">
+                  Browse Knowledge Base
+                  <MessageCircle size={20} className="ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Original AI Assistant content for logged-in users
   const [input, setInput] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
