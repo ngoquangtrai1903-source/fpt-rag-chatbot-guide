@@ -1,0 +1,77 @@
+// ==================== FIRESTORE SECURITY RULES ====================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ==================== QUESTIONS COLLECTION ====================
+    
+    // Mọi người có thể đọc câu hỏi
+    match /questions/{questionId} {
+      allow read: true;
+      allow list: true;
+      
+      // Chỉ user đã đăng nhập mới được tạo câu hỏi
+      allow create: if request.auth != null 
+        && request.auth.uid == resource.data.authorId
+        && request.auth.token.email_verified == true
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.details is string
+        && request.resource.data.details.size() > 0;
+      
+      // Combined update rule: Author OR Voter
+      allow update: if request.auth != null && request.auth.token.email_verified == true && (
+        // Case A: Tác giả sửa toàn bộ bài viết
+        (request.auth.uid == resource.data.authorId) ||
+        // Case B: Người khác chỉ được Vote (chỉ update vote-related fields)
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['voteCount', 'votedBy', 'updatedAt']) &&
+         request.resource.data.voteCount is int &&
+         request.resource.data.votedBy is list &&
+         request.resource.data.updatedAt is timestamp)
+      );
+      
+      // Chỉ author mới được xóa câu hỏi của mình
+      allow delete: if request.auth != null 
+        && request.auth.uid == resource.data.authorId;
+    }
+    
+    // ==================== COMMENTS COLLECTION ====================
+    
+    // Mọi người có thể đọc bình luận
+    match /comments/{commentId} {
+      allow read: true;
+      
+      // Chỉ user đã đăng nhập mới được tạo bình luận
+      allow create: if request.auth != null 
+        && request.auth.token.email_verified == true
+        && request.resource.data.questionId is string
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0
+        && request.resource.data.content.size() < 1000;
+      
+      // Combined update rule: Author OR Voter
+      allow update: if request.auth != null && request.auth.token.email_verified == true && (
+        // Case A: Tác giả bình luận có quyền sửa nội dung
+        request.auth.uid == resource.data.authorId ||
+        // Case B: Người khác có quyền Vote cho bình luận này
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['voteCount', 'votedBy', 'updatedAt']) &&
+         request.resource.data.voteCount is int &&
+         request.resource.data.votedBy is list &&
+         request.resource.data.updatedAt is timestamp)
+      );
+      
+      // Chỉ author mới được xóa bình luận của mình
+      allow delete: if request.auth != null 
+        && request.auth.uid == resource.data.authorId;
+    }
+    
+    // ==================== INDEXES OPTIMIZATION ====================
+    
+    // Tối ưu query performance với composite indexes
+    // Cần tạo indexes trong Firestore Console cho:
+    // - questions: createdAt (desc)
+    // - comments: questionId + createdAt (asc)
+    // - questions: authorId + createdAt (desc)
+  }
+}

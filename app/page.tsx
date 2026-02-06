@@ -2,219 +2,314 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { Menu, X, BookOpen, Users, MessageSquare, Zap } from 'lucide-react'
+import { 
+  ArrowRight, 
+  Sparkles, 
+  Users, 
+  BookOpen, 
+  MessageSquare, 
+  Zap, 
+  Shield, 
+  Target,
+  Star,
+  CheckCircle,
+  Rocket,
+  Brain,
+  Heart
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function Home() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user } = useAuth()
 
-  const sections = [
+  const features = [
     {
-      title: 'English Learning Program',
-      description: 'Complete guide to English at FPT University',
-      icon: '📚',
-      href: '/knowledge-base/english-learning',
-      color: 'from-primary to-accent',
+      icon: BookOpen,
+      title: 'Knowledge Base',
+      description: 'Comprehensive guides covering all aspects of student life at FPTU',
+      color: 'from-blue-500 to-blue-600'
     },
     {
-      title: 'Vovinam Guide',
-      description: 'Master the traditional Vietnamese martial art',
-      icon: '🥋',
-      href: '/knowledge-base/vovinam',
-      color: 'from-blue-500 to-blue-600',
+      icon: Users,
+      title: 'Community Q&A',
+      description: 'Connect with fellow students and get answers to your questions',
+      color: 'from-green-500 to-green-600'
     },
     {
-      title: 'Music & Arts',
-      description: 'Explore cultural and musical traditions',
-      icon: '🎵',
-      href: '/knowledge-base/music',
-      color: 'from-purple-500 to-purple-600',
+      icon: MessageSquare,
+      title: 'AI Assistant',
+      description: 'Get personalized help and guidance 24/7 from our AI assistant',
+      color: 'from-purple-500 to-purple-600'
     },
     {
-      title: 'Military Training',
-      description: 'Physical training and discipline program',
-      icon: '💪',
-      href: '/knowledge-base/military',
-      color: 'from-orange-500 to-orange-600',
-    },
-    {
-      title: 'Student Life',
-      description: 'Campus life, accommodations, and tips',
-      icon: '🏫',
-      href: '/knowledge-base/student-life',
-      color: 'from-green-500 to-green-600',
-    },
-    {
-      title: 'Academic Mastery',
-      description: 'FAP, FLM, SEB, EOS & study habits',
-      icon: '🎓',
-      href: '/knowledge-base/academic-mastery',
-      color: 'from-orange-500 to-orange-600',
-    },
+      icon: Zap,
+      title: 'Real-time Updates',
+      description: 'Stay informed with the latest events and announcements',
+      color: 'from-orange-500 to-orange-600'
+    }
   ]
 
-  const recentUpdates = [
-    { title: 'New Vovinam Training Schedule', date: 'Jan 28, 2025', category: 'Training' },
-    { title: 'Campus Orientation Guide Updated', date: 'Jan 25, 2025', category: 'Campus' },
-    { title: 'Q&A: Best Dormitories Revealed', date: 'Jan 23, 2025', category: 'Community' },
-    { title: 'Music Club Events This Week', date: 'Jan 20, 2025', category: 'Culture' },
+  const benefits = [
+    '🎯 Personalized learning paths',
+    '🤝 Active student community',
+    '🤖 24/7 AI assistance',
+    '📚 Comprehensive resources',
+    '🏆 Track your progress',
+    '🔒 Secure and private'
+  ]
+
+  const testimonials = [
+    {
+      name: 'Nguyễn Văn A',
+      role: 'IT Student',
+      content: 'This platform helped me navigate FPTU life so much better. The AI assistant is incredible!',
+      rating: 5
+    },
+    {
+      name: 'Trần Thị B',
+      role: 'Business Student',
+      content: 'The community Q&A section saved me countless times. Great resource for all students!',
+      rating: 5
+    },
+    {
+      name: 'Lê Văn C',
+      role: 'Design Student',
+      content: 'Knowledge Base has everything I need. From English to Vovinam, it\'s all here!',
+      rating: 5
+    }
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5">
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50 to-white">
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-        <div className="text-center space-y-6">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-balance">
-            Chào mừng đến với <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">FPTU Survival Guide</span>
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-            Cẩm nang dành cho tân sinh viên FPT University Đà Nẵng. Xem hướng dẫn, kết nối cộng đồng và nhận hỗ trợ tức thì từ trợ lý AI.
-          </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Link href="/knowledge-base">
-              <Button size="lg" className="gap-2">
-                <BookOpen size={20} />
-                Xem Knowledge Base
-              </Button>
-            </Link>
-            <Link href="/community">
-              <Button size="lg" variant="outline" className="gap-2 bg-transparent">
-                <Users size={20} />
-                Vào mục Cộng đồng
-              </Button>
-            </Link>
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-white to-blue-100 opacity-50"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
+          <div className="text-center space-y-8">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium">
+              <Sparkles size={16} />
+              <span>Your FPTU Survival Companion</span>
+            </div>
+
+            {/* Main Heading */}
+            <div className="space-y-6">
+              <div className="relative inline-block">
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 blur-3xl opacity-50 scale-110"></div>
+                <h1 className="relative text-6xl sm:text-7xl lg:text-8xl font-black text-gray-900 leading-tight tracking-tight">
+                  MASTER YOUR
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 font-black drop-shadow-lg">
+                    FPTU JOURNEY
+                  </span>
+                </h1>
+                <div className="absolute -top-4 -right-8 w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg transform rotate-12">
+                  <Zap size={32} className="text-white" />
+                </div>
+              </div>
+              <p className="text-xl sm:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium">
+                Your all-in-one companion for navigating FPT University life. 
+                <span className="block text-orange-600 font-semibold">From academics to campus life, we've got you covered.</span>
+              </p>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              {user ? (
+                <div className="text-center">
+                  <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-6 py-3 rounded-full text-lg font-medium">
+                    <Sparkles size={20} />
+                    <span>Welcome back! You're all set to explore</span>
+                  </div>
+                </div>
+              ) : (
+                <Link href="/login">
+                  <Button size="lg" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all">
+                    Get Started Now
+                    <Rocket size={20} className="ml-2" />
+                  </Button>
+                </Link>
+              )}
+              
+              <Link href="/assistant">
+                <Button size="lg" variant="outline" className="border-2 border-orange-200 text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg font-semibold">
+                  Try AI Assistant
+                  <Brain size={20} className="ml-2" />
+                </Button>
+              </Link>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mt-16">
+              {[
+                { number: '10K+', label: 'Active Students' },
+                { number: '500+', label: 'Knowledge Articles' },
+                { number: '24/7', label: 'AI Support' },
+                { number: '98%', label: 'Satisfaction Rate' }
+              ].map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-3xl sm:text-4xl font-bold text-orange-600">{stat.number}</div>
+                  <div className="text-sm text-gray-600 mt-1">{stat.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Quick Stats */}
-      <section className="bg-card/50 border-y border-border py-8 sm:py-12">
+      {/* Features Section */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">500+</div>
-              <p className="text-sm text-muted-foreground">Resources & Guides</p>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-accent mb-2">2.5K+</div>
-              <p className="text-sm text-muted-foreground">Active Students</p>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">24/7</div>
-              <p className="text-sm text-muted-foreground">AI Support</p>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-accent mb-2">100%</div>
-              <p className="text-sm text-muted-foreground">Free Access</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Knowledge Base Sections */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-        <div className="space-y-8">
-          <div className="text-center space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-bold">Knowledge Base</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive guides to help you navigate your first year
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Everything You Need in One Place
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover powerful features designed to make your FPTU journey successful and enjoyable
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {sections.map((section) => (
-              <Link key={section.href} href={section.href}>
-                <div className="group h-full p-6 rounded-lg border border-border bg-card hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer">
-                  <div className="flex items-start justify-between mb-4">
-                    <span className="text-4xl">{section.icon}</span>
-                    <Zap size={18} className="text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => {
+              const Icon = feature.icon
+              return (
+                <div key={index} className="group relative">
+                  <div className="text-center space-y-4">
+                    <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} text-white shadow-lg group-hover:scale-110 transition-transform`}>
+                      <Icon size={32} />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900">{feature.title}</h3>
+                    <p className="text-gray-600 leading-relaxed">{feature.description}</p>
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{section.title}</h3>
-                  <p className="text-muted-foreground text-sm">{section.description}</p>
                 </div>
-              </Link>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* Breaking News & Updates */}
-      <section className="bg-card/50 border-y border-border py-12 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-bold">Latest Updates</h2>
-            <p className="text-muted-foreground">Stay informed with recent announcements and community highlights</p>
+      {/* Benefits Section */}
+      <section className="py-20 bg-gradient-to-r from-orange-50 to-orange-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                  Why Choose FPTU Survival Guide?
+                </h2>
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  We're not just another student platform. We're your dedicated companion for success at FPT University.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <CheckCircle size={20} className="text-green-500 flex-shrink-0" />
+                    <span className="text-gray-700 font-medium">{benefit}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Link href="/community">
+                <Button size="lg" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 font-semibold shadow-lg">
+                  Start Your Journey
+                  <ArrowRight size={20} className="ml-2" />
+                </Button>
+              </Link>
+            </div>
+
+            <div className="relative">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <div className="bg-white p-6 rounded-2xl shadow-lg text-center">
+                    <Shield size={40} className="text-orange-500 mx-auto mb-3" />
+                    <div className="font-semibold text-gray-900">Secure Platform</div>
+                  </div>
+                  <div className="bg-white p-6 rounded-2xl shadow-lg text-center">
+                    <Target size={40} className="text-blue-500 mx-auto mb-3" />
+                    <div className="font-semibold text-gray-900">Goal Oriented</div>
+                  </div>
+                </div>
+                <div className="space-y-4 mt-8">
+                  <div className="bg-white p-6 rounded-2xl shadow-lg text-center">
+                    <Heart size={40} className="text-red-500 mx-auto mb-3" />
+                    <div className="font-semibold text-gray-900">Community Driven</div>
+                  </div>
+                  <div className="bg-white p-6 rounded-2xl shadow-lg text-center">
+                    <Zap size={40} className="text-purple-500 mx-auto mb-3" />
+                    <div className="font-semibold text-gray-900">Lightning Fast</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Loved by FPTU Students
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              See what our community has to say about their experience
+            </p>
           </div>
 
-          <div className="space-y-4">
-            {recentUpdates.map((update, idx) => (
-              <div key={idx} className="p-4 rounded-lg border border-border bg-background hover:border-primary/50 transition-colors">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-semibold text-sm mb-1">{update.title}</p>
-                    <p className="text-xs text-muted-foreground">{update.date}</p>
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div key={index} className="bg-white p-8 rounded-2xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow">
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} size={16} className="text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-6 italic">"{testimonial.content}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                    {testimonial.name.charAt(0)}
                   </div>
-                  <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">{update.category}</span>
+                  <div>
+                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
+                    <div className="text-sm text-gray-600">{testimonial.role}</div>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-
-          <Link href="/community">
-            <Button variant="outline" className="w-full sm:w-auto bg-transparent">
-              View All Updates
-            </Button>
-          </Link>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-        <div className="relative rounded-xl border border-border overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 p-8 sm:p-12 text-center space-y-6">
-          <div className="absolute inset-0 opacity-5 pointer-events-none" />
-          <div className="relative space-y-4">
-            <h2 className="text-3xl sm:text-4xl font-bold">Need Help?</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Ask our FPTU Assistant AI any question about student life, training programs, or campus resources.
+      {/* Final CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="space-y-8">
+            <h2 className="text-4xl sm:text-5xl font-bold">
+              Ready to Transform Your FPTU Experience?
+            </h2>
+            <p className="text-xl text-orange-100 max-w-3xl mx-auto">
+              Join thousands of students who are already succeeding with FPTU Survival Guide
             </p>
-            <Link href="/assistant">
-              <Button size="lg" className="gap-2">
-                <MessageSquare size={20} />
-                Chat with FPTU Assistant
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/community">
+                <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg font-semibold shadow-lg">
+                  Get Started Free
+                  <ArrowRight size={20} className="ml-2" />
+                </Button>
+              </Link>
+              <Link href="/assistant">
+                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-orange-600 px-8 py-4 text-lg font-semibold">
+                  Try AI Assistant
+                  <Brain size={20} className="ml-2" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-card/50 py-8 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <p className="font-semibold mb-2">FPTU Survival Guide</p>
-              <p className="text-sm text-muted-foreground">Supporting first-year students at FPT University Da Nang</p>
-            </div>
-            <div>
-              <p className="font-semibold mb-3">Quick Links</p>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/knowledge-base" className="text-muted-foreground hover:text-foreground">Knowledge Base</Link></li>
-                <li><Link href="/community" className="text-muted-foreground hover:text-foreground">Community</Link></li>
-                <li><Link href="/assistant" className="text-muted-foreground hover:text-foreground">AI Assistant</Link></li>
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold mb-3">Contact</p>
-              <p className="text-sm text-muted-foreground">Email: support@fptusurvival.com</p>
-              <p className="text-sm text-muted-foreground">Campus: FPT University Da Nang</p>
-            </div>
-          </div>
-          <div className="border-t border-border pt-8 text-center text-sm text-muted-foreground">
-            <p>© 2026 FPTU Survival Guide. Made for students, by students.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

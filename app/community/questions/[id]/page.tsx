@@ -1,217 +1,520 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ThumbsUp, MessageCircle, Share2, Flag } from 'lucide-react'
+import { ThumbsUp, MessageCircle, Share2, Flag, Send, Trash2, ArrowUpDown, Star } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
+import { 
+  getQuestionById,
+  submitComment,
+  getCommentsByQuestion,
+  toggleCommentVote,
+  toggleVote,
+  testFetchComments,
+  deleteQuestion,
+  deleteComment
+} from '@/lib/communityService'
 
-export default function QuestionDetailPage({ params }: { params: { id: string } }) {
+interface Question {
+  id: string
+  title: string
+  category: string
+  details: string
+  authorId: string
+  authorName: string
+  authorEmail: string
+  voteCount: number
+  votedBy: string[]
+  createdAt: {
+    seconds: number
+    nanoseconds: number
+  }
+  updatedAt: {
+    seconds: number
+    nanoseconds: number
+  }
+}
+
+interface Comment {
+  id: string
+  questionId: string
+  content: string
+  authorId: string
+  authorName: string
+  authorEmail: string
+  voteCount: number
+  votedBy: string[]
+  createdAt: {
+    seconds: number
+    nanoseconds: number
+  }
+}
+
+export default function QuestionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { user } = useAuth()
+  const [question, setQuestion] = useState<Question | null>(null)
+  const [comments, setComments] = useState<Comment[]>([])
   const [isAnswering, setIsAnswering] = useState(false)
+  const [answerContent, setAnswerContent] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [forceUpdate, setForceUpdate] = useState(0)
+  const [commentSortBy, setCommentSortBy] = useState<'newest' | 'popular'>('newest')
 
-  // Mock data - in production this would be fetched from database
-  const question = {
-    id: params.id,
-    title: "What's the best dormitory to request for first-years?",
-    category: 'Housing',
-    author: 'Nguyễn Hà',
-    timestamp: '2 hours ago',
-    views: 1200,
-    votes: 145,
-    content: `I'm a new first-year student and I'm trying to decide which dormitory to request for next semester. I've heard different opinions about which ones are best. Here are my priorities:
+  // Unwrap params
+  const resolvedParams = React.use(params)
+  const questionId = resolvedParams.id
 
-1. Good study environment (quiet spaces available)
-2. Proximity to library and academic buildings
-3. Decent food options nearby
-4. Good internet/WiFi connection
-5. Friendly community/social atmosphere
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined
 
-Can anyone recommend which dorm I should prioritize? I'd especially like to hear from current residents about their experiences.
+    const fetchQuestionData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        // Fetch question details
+        const questionData = await getQuestionById(questionId)
+        if (questionData) {
+          setQuestion(questionData as Question)
+        } else {
+          setError('Question not found')
+        }
 
-Also, is there a way to request a specific dorm or does FPTU just assign them randomly?`,
-    tags: ['dorm', 'housing', 'first-year'],
+        // Fetch comments with real-time listener
+        unsubscribe = getCommentsByQuestion(questionId, (commentsList: Comment[]) => {
+          console.log('Comments fetched via real-time:', commentsList)
+          setComments(commentsList)
+        }, commentSortBy) as () => void
+
+        // Also do an initial manual fetch
+        const initialComments = await testFetchComments(questionId)
+        console.log('Initial comments fetch:', initialComments)
+        if (initialComments.length > 0) {
+          setComments(initialComments as Comment[])
+        }
+
+        return unsubscribe
+      } catch (err) {
+        console.error('Error fetching question:', err)
+        setError('Failed to load question')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (questionId) {
+      fetchQuestionData()
+    }
+
+    // Cleanup function
+    return () => {
+      if (unsubscribe) {
+        unsubscribe()
+      }
+    }
+  }, [questionId])
+
+  // Re-fetch comments when sort changes
+  useEffect(() => {
+    if (questionId) {
+      const unsubscribe = getCommentsByQuestion(questionId, (commentsList: Comment[]) => {
+        console.log('Comments re-fetched with sort:', commentSortBy, commentsList)
+        setComments(commentsList)
+      }, commentSortBy) as () => void
+      
+      return () => {
+        if (unsubscribe) {
+          unsubscribe()
+        }
+      }
+    }
+  }, [questionId, commentSortBy])
+
+  // Debug: Log when comments change
+  useEffect(() => {
+    console.log('Comments state updated:', comments.length, 'items')
+  }, [comments])
+
+  const handleSubmitAnswer = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!user) {
+      // Redirect to login
+      window.location.href = '/login'
+      return
+    }
+
+    if (!answerContent.trim()) {
+      alert('Vui lòng nhập nội dung trả lời')
+      return
+    }
+
+    setIsAnswering(true)
+    
+    try {
+      console.log('Submitting answer for questionId:', questionId)
+      await submitComment(questionId, answerContent.trim())
+      setAnswerContent('')
+      setIsAnswering(false)
+      alert('✅ Đăng trả lời thành công!')
+      
+      // Refresh comments after successful submission
+      const testComments = await testFetchComments(questionId)
+      console.log('Comments after submission:', testComments)
+      setComments(testComments as Comment[])
+      
+      // Force re-render
+      setForceUpdate(prev => prev + 1)
+    } catch (error: any) {
+      console.error('Error submitting answer:', error)
+      
+      // Better error handling for permission issues
+      if (error.message?.includes('permission-denied') || error.message?.includes('Missing or insufficient permissions')) {
+        alert('❌ Thao tác không hợp lệ hoặc bạn không có quyền thực hiện hành động này')
+      } else {
+        alert('❌ Lỗi khi đăng trả lời: ' + error.message)
+      }
+    } finally {
+      setIsAnswering(false)
+    }
   }
 
-  const answers = [
-    {
-      id: 1,
-      author: 'Trần Minh',
-      timestamp: '1 hour ago',
-      votes: 45,
-      content: `I'm currently in Dorm A and I'd highly recommend it! It's the newest building with:
-- Recently renovated rooms and bathrooms
-- Strong WiFi throughout the building
-- Quiet hours strictly enforced
-- Close to the library (5-min walk)
-- Great community with regular events
+  const handleVoteQuestion = async () => {
+    if (!user) {
+      // Redirect to login
+      window.location.href = '/login'
+      return
+    }
 
-The only downside is it can be a bit louder on weekends due to social events. But overall, it's the best choice for first-years.`,
-      isAnswer: true,
-    },
-    {
-      id: 2,
-      author: 'Lê Thu',
-      timestamp: '45 minutes ago',
-      votes: 32,
-      content: `Dorm B is also excellent if you want a quieter environment. It's positioned away from the main campus area, which makes it perfect for studying. The study lounges are amazing!
+    try {
+      await toggleVote(questionId)
+      // Refresh question data to update vote count and votedBy
+      const updatedQuestion = await getQuestionById(questionId)
+      if (updatedQuestion) {
+        setQuestion(updatedQuestion as Question)
+      }
+    } catch (error: any) {
+      console.error('Error voting question:', error)
+      
+      // Better error handling for permission issues
+      if (error.message?.includes('permission-denied') || error.message?.includes('Missing or insufficient permissions')) {
+        alert('❌ Thao tác không hợp lệ hoặc bạn không có quyền thực hiện hành động này')
+      } else {
+        alert('❌ Lỗi khi vote: ' + error.message)
+      }
+    }
+  }
 
-However, it's a bit farther from dining options, so you'll need to walk or bike to get food. The good news is it's cheaper than Dorm A.`,
-      isAnswer: true,
-    },
-    {
-      id: 3,
-      author: 'Phạm An',
-      timestamp: '30 minutes ago',
-      votes: 28,
-      content: `Regarding dorm selection - FPTU actually considers your preferences, but it's not guaranteed. Here's the process:
+  const handleVoteComment = async (commentId: string) => {
+    if (!user) {
+      // Redirect to login
+      window.location.href = '/login'
+      return
+    }
 
-1. You submit your top 3 choices during registration
-2. Room type preference (single, double, or triple)
-3. Dormitory office tries to accommodate based on availability
-4. Some dorms have waiting lists
+    try {
+      await toggleCommentVote(commentId)
+      // Refresh comments to update vote count and votedBy
+      const updatedComments = await testFetchComments(questionId)
+      setComments(updatedComments as Comment[])
+    } catch (error: any) {
+      console.error('Error voting comment:', error)
+      
+      // Better error handling for permission issues
+      if (error.message?.includes('permission-denied') || error.message?.includes('Missing or insufficient permissions')) {
+        alert('❌ Thao tác không hợp lệ hoặc bạn không có quyền thực hiện hành động này')
+      } else {
+        alert('❌ Lỗi khi vote: ' + error.message)
+      }
+    }
+  }
 
-My recommendation: Apply early and be flexible with your second/third choices. You're more likely to get your first choice if you apply in the first week of registration.`,
-      isAnswer: false,
-    },
-  ]
+  const handleTestFetchComments = async () => {
+    try {
+      const testComments = await testFetchComments(questionId)
+      console.log('Test comments:', testComments)
+      alert(`Test: Found ${testComments.length} comments in database`)
+      setComments(testComments as Comment[])
+    } catch (error: any) {
+      console.error('Test fetch error:', error)
+      alert('Test fetch error: ' + error.message)
+    }
+  }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5">
-      {/* Back Navigation */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <Link href="/community" className="text-primary hover:underline flex items-center gap-2 text-sm">
-            ← Back to Community
+  const handleManualRefresh = async () => {
+    try {
+      console.log('Manual refresh triggered')
+      const testComments = await testFetchComments(questionId)
+      console.log('Manual refresh results:', testComments)
+      setComments(testComments as Comment[])
+    } catch (error: any) {
+      console.error('Manual refresh error:', error)
+    }
+  }
+
+  const handleDeleteQuestion = async () => {
+    if (!user) {
+      alert('Bạn cần đăng nhập để xóa câu hỏi')
+      return
+    }
+
+    if (!confirm('Bạn có chắc chắn muốn xóa câu hỏi này? Tất cả câu trả lời cũng sẽ bị xóa.')) {
+      return
+    }
+
+    try {
+      await deleteQuestion(questionId)
+      alert('✅ Đã xóa câu hỏi thành công!')
+      window.location.href = '/community'
+    } catch (error: any) {
+      console.error('Error deleting question:', error)
+      alert('❌ Lỗi khi xóa câu hỏi: ' + error.message)
+    }
+  }
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!user) {
+      alert('Bạn cần đăng nhập để xóa bình luận')
+      return
+    }
+
+    if (!confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
+      return
+    }
+
+    try {
+      await deleteComment(commentId)
+      alert('✅ Đã xóa bình luận thành công!')
+      setForceUpdate(prev => prev + 1)
+    } catch (error: any) {
+      console.error('Error deleting comment:', error)
+      alert('❌ Lỗi khi xóa bình luận: ' + error.message)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading question...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !question) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Question Not Found</h1>
+          <p className="text-muted-foreground mb-6">{error || 'This question could not be found.'}</p>
+          <Link href="/community">
+            <Button>Back to Community</Button>
           </Link>
         </div>
       </div>
+    )
+  }
 
-      {/* Main Content */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Question Header */}
-        <div className="mb-8">
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5">
+      {/* Header */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Question Card */}
+        <div className="bg-card border border-border rounded-xl p-6 mb-8">
           <div className="flex items-start justify-between mb-4">
-            <h1 className="text-3xl sm:text-4xl font-bold">{question.title}</h1>
-            <button className="p-2 hover:bg-secondary/50 rounded-lg transition-colors">
-              <Flag size={20} className="text-muted-foreground" />
-            </button>
-          </div>
-
-          <div className="flex gap-4 flex-wrap mb-4 text-sm text-muted-foreground">
-            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary">{question.category}</span>
-            <span>Asked by <span className="font-medium text-foreground">{question.author}</span></span>
-            <span>{question.timestamp}</span>
-            <span>{question.views} views</span>
-          </div>
-
-          <div className="flex gap-2">
-            {question.tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-xs px-2 py-1 rounded-full bg-secondary/50 text-muted-foreground"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Question Content */}
-        <div className="bg-card border border-border rounded-lg p-6 mb-8">
-          <p className="text-foreground whitespace-pre-wrap leading-relaxed">{question.content}</p>
-
-          <div className="flex gap-4 mt-6 pt-6 border-t border-border">
-            <button className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-              <ThumbsUp size={18} />
-              <span className="text-sm">{question.votes}</span>
-            </button>
-            <button className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-              <MessageCircle size={18} />
-              <span className="text-sm">{answers.length}</span>
-            </button>
-            <button className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-              <Share2 size={18} />
-              <span className="text-sm">Share</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Answers Section */}
-        <div className="space-y-6 mb-12">
-          <h2 className="text-2xl font-bold">{answers.length} Answers</h2>
-
-          {answers.map((answer) => (
-            <div key={answer.id} className="bg-card border border-border rounded-lg p-6">
-              {answer.isAnswer && (
-                <div className="mb-4 px-3 py-2 rounded bg-green-500/10 border border-green-500/20 text-xs font-medium text-green-600 dark:text-green-400 inline-block">
-                  ✓ Helpful Answer
-                </div>
-              )}
-
-              <p className="text-foreground whitespace-pre-wrap leading-relaxed mb-4">{answer.content}</p>
-
-              <div className="flex items-center justify-between pt-4 border-t border-border">
-                <p className="text-sm text-muted-foreground">
-                  Answered by <span className="font-medium text-foreground">{answer.author}</span> • {answer.timestamp}
-                </p>
-                <button className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                  <ThumbsUp size={16} />
-                  <span className="text-xs">{answer.votes}</span>
-                </button>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-medium">
+                  {question.category}
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  {question.createdAt ? new Date(question.createdAt.seconds * 1000).toLocaleString() : 'Unknown'}
+                </span>
+              </div>
+              <h1 className="text-2xl font-bold mb-4">{question.title}</h1>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                <span>by {question.authorName}</span>
+                <span>•</span>
+                <span>{question.voteCount || 0} votes</span>
               </div>
             </div>
-          ))}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleVoteQuestion}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  question.votedBy && question.votedBy.includes(user?.uid || '')
+                    ? 'bg-orange-500 text-white hover:bg-orange-600'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                <Star size={16} fill={question.votedBy && question.votedBy.includes(user?.uid || '') ? 'white' : 'none'} />
+                {question.voteCount || 0}
+              </button>
+              {user && question.authorId === user.uid && (
+                <button
+                  onClick={handleDeleteQuestion}
+                  className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-500"
+                  title="Xóa câu hỏi"
+                >
+                  <Trash2 size={20} />
+                </button>
+              )}
+            </div>
+          </div>
+          
+          <div className="prose max-w-none text-gray-700 mb-6">
+            {question.details}
+          </div>
         </div>
 
         {/* Answer Form */}
-        <div className="bg-card border border-border rounded-lg p-6">
-          <h3 className="text-xl font-bold mb-4">Your Answer</h3>
-
+        <div className="bg-card border border-border rounded-xl p-6 mb-8">
+          <h2 className="text-xl font-bold mb-4">Your Answer</h2>
+          
           {!isAnswering ? (
-            <Button onClick={() => setIsAnswering(true)} variant="outline" className="w-full">
-              Write your answer
+            <Button 
+              onClick={() => setIsAnswering(true)}
+              className="w-full"
+            >
+              <MessageCircle size={16} className="mr-2" />
+              Write Answer
             </Button>
           ) : (
-            <form className="space-y-4">
+            <form onSubmit={handleSubmitAnswer} className="space-y-4">
               <textarea
-                placeholder="Share your experience and knowledge with the community..."
-                className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors resize-none"
-                rows={6}
+                value={answerContent}
+                onChange={(e) => setAnswerContent(e.target.value)}
+                placeholder="Share your knowledge and help answer this question..."
+                className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors min-h-[120px] resize-y"
               />
               <div className="flex gap-3">
-                <Button type="submit" className="gap-2">
-                  <MessageCircle size={18} />
+                <Button 
+                  type="submit"
+                  disabled={!answerContent.trim() || !user}
+                  className="flex-1"
+                >
+                  <Send size={16} className="mr-2" />
                   Post Answer
                 </Button>
-                <Button
+                <Button 
                   type="button"
                   variant="outline"
-                  onClick={() => setIsAnswering(false)}
+                  onClick={() => {
+                    setIsAnswering(false)
+                    setAnswerContent('')
+                  }}
                 >
                   Cancel
                 </Button>
               </div>
+              {!user && (
+                <p className="text-sm text-muted-foreground">
+                  You need to be logged in to post an answer.
+                </p>
+              )}
             </form>
           )}
-
-          <p className="text-xs text-muted-foreground mt-4">
-            Remember to be helpful and respectful. Your answer could help other students!
-          </p>
         </div>
-      </section>
 
-      {/* CTA */}
-      <section className="bg-card/50 border-t border-border py-12 mt-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <h2 className="text-2xl font-bold">Didn't find what you're looking for?</h2>
-          <p className="text-muted-foreground">Ask your own question or chat with FPTU Assistant</p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Link href="/community/new">
-              <Button>Ask a Question</Button>
-            </Link>
-            <Link href="/assistant">
-              <Button variant="outline">Chat with AI</Button>
-            </Link>
+        {/* Comments Section */}
+        <div key={`comments-${comments.length}-${forceUpdate}`} className="space-y-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold">
+              {comments.length} {comments.length === 1 ? 'Answer' : 'Answers'}
+            </h2>
+            <div className="flex items-center gap-2">
+              <select
+                value={commentSortBy}
+                onChange={(e) => setCommentSortBy(e.target.value as 'newest' | 'popular')}
+                className="px-3 py-1 border border-border rounded-lg bg-background text-sm focus:border-primary focus:outline-none"
+              >
+                <option value="newest">Mới nhất</option>
+                <option value="popular">Phổ biến nhất</option>
+              </select>
+              <ArrowUpDown size={16} className="text-muted-foreground" />
+            </div>
           </div>
+          
+          {/* Debug: Show comments count */}
+          <div className="text-xs text-gray-500 mb-2">
+            Debug: Comments state has {comments.length} items
+            <Button 
+              onClick={handleTestFetchComments}
+              size="sm"
+              variant="outline"
+              className="ml-2"
+            >
+              Test Fetch
+            </Button>
+            <Button 
+              onClick={handleManualRefresh}
+              size="sm"
+              variant="outline"
+              className="ml-2"
+            >
+              Manual Refresh
+            </Button>
+          </div>
+          
+          {comments.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              No answers yet. Be the first to help!
+            </div>
+          ) : (
+            comments.map((comment) => {
+              console.log('Rendering comment:', comment)
+              return (
+                <div key={comment.id} className="bg-card border border-border rounded-xl p-6">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900 mb-1">{comment.authorName}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {comment.createdAt ? new Date(comment.createdAt.seconds * 1000).toLocaleString() : 'Unknown'}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleVoteComment(comment.id)}
+                        className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm transition-colors ${
+                          comment.votedBy && comment.votedBy.includes(user?.uid || '')
+                            ? 'bg-orange-500 text-white hover:bg-orange-600'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        <Star size={14} fill={comment.votedBy && comment.votedBy.includes(user?.uid || '') ? 'white' : 'none'} />
+                        {comment.voteCount || 0}
+                      </button>
+                      {user && comment.authorId === user.uid && (
+                        <button
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-500"
+                          title="Xóa bình luận"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="prose max-w-none text-gray-700">
+                    {comment.content}
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+
+        {/* Back Button */}
+        <div className="mt-8 text-center">
+          <Link href="/community">
+            <Button variant="outline">
+              ← Back to Community
+            </Button>
+          </Link>
         </div>
       </section>
     </div>
