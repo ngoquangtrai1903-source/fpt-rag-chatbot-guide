@@ -100,29 +100,18 @@ export default function AssistantPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5 flex flex-col">
-      {/* Back Navigation */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3 w-full">
-          <Link href="/" className="text-primary hover:underline flex items-center gap-2 text-sm">
-            ← Back to Home
-          </Link>
-        </div>
-      </div>
-
       {/* Header */}
-      {messages.length === 0 && (
-        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto">
-              <MessageCircle size={32} className="text-primary-foreground" />
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-bold">FPTU Assistant</h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Hi! I'm your AI guide for FPTU. Ask me anything about student life, training programs, clubs, or campus resources. I'm here to help you thrive!
-            </p>
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto">
+            <MessageCircle size={32} className="text-primary-foreground" />
           </div>
-        </section>
-      )}
+          <h1 className="text-2xl font-bold">FPTU AI Assistant</h1>
+          <p className="text-muted-foreground">
+            Hi! I'm your AI guide for FPTU. Ask me anything about student life, training programs, clubs, or campus resources. I'm here to help you thrive!
+          </p>
+        </div>
+      </section>
 
       {/* Messages Container */}
       <div className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8">

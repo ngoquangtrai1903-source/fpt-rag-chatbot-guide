@@ -63,16 +63,7 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
-      {/* Back Navigation */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <Link href="/" className="text-primary hover:underline flex items-center gap-2 text-sm font-medium">
-            ← Quay lại Trang chủ
-          </Link>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5">
       {/* Header */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="space-y-4">

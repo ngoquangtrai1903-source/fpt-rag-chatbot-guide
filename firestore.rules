@@ -9,6 +9,7 @@ service cloud.firestore {
     // Mọi người có thể đọc câu hỏi
     match /questions/{questionId} {
       allow read: true;
+      allow list: true;
       
       // Chỉ user đã đăng nhập mới được tạo câu hỏi
       allow create: if request.auth != null 
@@ -19,20 +20,20 @@ service cloud.firestore {
         && request.resource.data.details is string
         && request.resource.data.details.size() > 0;
       
-      // Chỉ author mới được cập nhật câu hỏi của mình
-      allow update: if request.auth != null 
-        && request.auth.uid == resource.data.authorId
-        && request.auth.token.email_verified == true;
+      // Combined update rule: Author OR Voter
+      allow update: if request.auth != null && request.auth.token.email_verified == true && (
+        // Case A: Tác giả sửa toàn bộ bài viết
+        (request.auth.uid == resource.data.authorId) ||
+        // Case B: Người khác chỉ được Vote (chỉ update vote-related fields)
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['voteCount', 'votedBy', 'updatedAt']) &&
+         request.resource.data.voteCount is int &&
+         request.resource.data.votedBy is list &&
+         request.resource.data.updatedAt is timestamp)
+      );
       
       // Chỉ author mới được xóa câu hỏi của mình
       allow delete: if request.auth != null 
         && request.auth.uid == resource.data.authorId;
-    }
-    
-    // List questions - chỉ cho đọc
-    match /questions/{questionId} {
-      allow read: true;
-      allow list: true;
     }
     
     // ==================== COMMENTS COLLECTION ====================
@@ -49,10 +50,16 @@ service cloud.firestore {
         && request.resource.data.content.size() > 0
         && request.resource.data.content.size() < 1000;
       
-      // Chỉ author mới được cập nhật bình luận của mình
-      allow update: if request.auth != null 
-        && request.auth.uid == resource.data.authorId
-        && request.auth.token.email_verified == true;
+      // Combined update rule: Author OR Voter
+      allow update: if request.auth != null && request.auth.token.email_verified == true && (
+        // Case A: Tác giả bình luận có quyền sửa nội dung
+        request.auth.uid == resource.data.authorId ||
+        // Case B: Người khác có quyền Vote cho bình luận này
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['voteCount', 'votedBy', 'updatedAt']) &&
+         request.resource.data.voteCount is int &&
+         request.resource.data.votedBy is list &&
+         request.resource.data.updatedAt is timestamp)
+      );
       
       // Chỉ author mới được xóa bình luận của mình
       allow delete: if request.auth != null 

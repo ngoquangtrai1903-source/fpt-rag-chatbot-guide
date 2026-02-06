@@ -3,15 +3,15 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Search, MessageCircle, ThumbsUp, Eye, Plus, Users, ArrowRight, Brain } from 'lucide-react'
+import { Search, MessageCircle, ThumbsUp, Eye, Plus, Users, ArrowRight, Brain, Sparkles, Trophy, Star, ArrowUpDown } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { 
   postQuestion,
   fetchQuestionsRealtime,
   toggleVote,
-  submitComment,
-  getCommentsByQuestion,
-  toggleCommentVote
+  getUserData,
+  getTopUsers,
+  getCommunityStats
 } from '@/lib/communityService'
 
 // Type definitions for Firebase data
@@ -21,25 +21,6 @@ interface Question {
   category: string
   details: string
   tags: string[]
-  authorId: string
-  authorName: string
-  authorEmail: string
-  voteCount: number
-  votedBy: string[]
-  createdAt: {
-    seconds: number
-    nanoseconds: number
-  }
-  updatedAt: {
-    seconds: number
-    nanoseconds: number
-  }
-}
-
-interface Comment {
-  id: string
-  questionId: string
-  content: string
   authorId: string
   authorName: string
   authorEmail: string
@@ -119,8 +100,13 @@ export default function CommunityPage() {
   const [questions, setQuestions] = useState<Question[]>([])
   const [loading, setLoading] = useState(true)
   const [showPostForm, setShowPostForm] = useState(false)
-  const [comments, setComments] = useState<{ [key: string]: Comment[] }>({})
-  const [selectedQuestion, setSelectedQuestion] = useState<string | null>(null)
+  const [userReputation, setUserReputation] = useState(0)
+  const [topUsers, setTopUsers] = useState<any[]>([])
+  const [communityStats, setCommunityStats] = useState<any>(null)
+  const [sortBy, setSortBy] = useState<'newest' | 'popular' | 'mostAnswers'>('newest')
+  const [selectedCategory, setSelectedCategory] = useState<string>('All')
+  const [selectedTag, setSelectedTag] = useState<string>('')
+  const [popularTags, setPopularTags] = useState<string[]>(['first-year', 'dorm', 'vovinam', 'budget', 'food', 'music', 'tips'])
   const [formData, setFormData] = useState({
     title: '',
     category: 'Academic',
@@ -131,26 +117,51 @@ export default function CommunityPage() {
 
   // ==================== REAL-TIME DATA FETCHING ====================
   useEffect(() => {
-    console.log('🔧 Setting up Firebase real-time listener...')
-    
-    const unsubscribe = fetchQuestionsRealtime((questionsList: Question[]) => {
-      console.log('📡 Firebase questions received:', questionsList.length)
-      setQuestions(questionsList)
-      setLoading(false)
-    })
+    if (!user) return
 
-    return () => {
-      console.log('🧹 Cleaning up Firebase listener...')
-      unsubscribe()
+    // Fetch user data and reputation
+    const fetchUserData = async () => {
+      try {
+        const userData = await getUserData(user.uid)
+        setUserReputation((userData as any).reputation || 0)
+      } catch (error) {
+        console.error('Error fetching user data:', error)
+      }
     }
-  }, [])
+
+    // Fetch top users and community stats
+    const fetchCommunityData = async () => {
+      try {
+        const [topUsersData, statsData] = await Promise.all([
+          getTopUsers(5),
+          getCommunityStats()
+        ])
+        setTopUsers(topUsersData)
+        setCommunityStats(statsData)
+      } catch (error) {
+        console.error('Error fetching community data:', error)
+      }
+    }
+
+    fetchUserData()
+    fetchCommunityData()
+
+    // Real-time questions listener
+    const unsubscribe = fetchQuestionsRealtime((data: Question[]) => {
+      setQuestions(data)
+      setLoading(false)
+    }, sortBy)
+
+    return () => unsubscribe()
+  }, [user, sortBy])
 
   // ==================== POST QUESTION ====================
   const handlePostQuestion = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!user) {
-      alert('Bạn cần đăng nhập để đăng câu hỏi')
+      // Redirect to login instead of just alert
+      window.location.href = '/login'
       return
     }
 
@@ -184,14 +195,21 @@ export default function CommunityPage() {
       alert('✅ Đăng câu hỏi thành công!')
     } catch (error: any) {
       console.error('❌ Error posting to Firebase:', error)
-      alert('❌ Lỗi khi đăng câu hỏi: ' + error.message)
+      
+      // Better error handling for permission issues
+      if (error.message?.includes('permission-denied') || error.message?.includes('Missing or insufficient permissions')) {
+        alert('❌ Thao tác không hợp lệ hoặc bạn không có quyền thực hiện hành động này')
+      } else {
+        alert('❌ Lỗi khi đăng câu hỏi: ' + error.message)
+      }
     }
   }
 
   // ==================== VOTE ====================
   const handleVote = async (questionId: string) => {
     if (!user) {
-      alert('Bạn cần đăng nhập để vote')
+      // Redirect to login
+      window.location.href = '/login'
       return
     }
 
@@ -200,67 +218,14 @@ export default function CommunityPage() {
       console.log('✅ Vote successful!')
     } catch (error: any) {
       console.error('❌ Error voting:', error)
-      alert('❌ Lỗi khi vote: ' + error.message)
+      
+      // Better error handling for permission issues
+      if (error.message?.includes('permission-denied') || error.message?.includes('Missing or insufficient permissions')) {
+        alert('❌ Thao tác không hợp lệ hoặc bạn không có quyền thực hiện hành động này')
+      } else {
+        alert('❌ Lỗi khi vote: ' + error.message)
+      }
     }
-  }
-
-  // ==================== COMMENT SUBMISSION ====================
-  const handleSubmitComment = async (questionId: string, content: string) => {
-    if (!user) {
-      alert('Bạn cần đăng nhập để bình luận')
-      return
-    }
-
-    if (!content.trim()) {
-      alert('Nội dung bình luận không được để trống')
-      return
-    }
-
-    try {
-      await submitComment(questionId, content.trim())
-      console.log('💬 Comment submitted successfully')
-      alert('✅ Bình luận thành công!')
-    } catch (error: any) {
-      console.error('❌ Error commenting:', error)
-      alert('❌ Lỗi khi bình luận: ' + error.message)
-    }
-  }
-
-  // ==================== COMMENT VOTE ====================
-  const handleCommentVote = async (commentId: string) => {
-    if (!user) {
-      alert('Bạn cần đăng nhập để vote bình luận')
-      return
-    }
-
-    try {
-      await toggleCommentVote(commentId)
-      console.log('✅ Comment vote successful!')
-    } catch (error: any) {
-      console.error('❌ Error voting comment:', error)
-      alert('❌ Lỗi khi vote bình luận: ' + error.message)
-    }
-  }
-
-  // ==================== SELECT QUESTION FOR COMMENTS ====================
-  const handleSelectQuestion = (questionId: string) => {
-    if (selectedQuestion === questionId) {
-      setSelectedQuestion(null)
-      return
-    }
-
-    setSelectedQuestion(questionId)
-    
-    // Lắng nghe bình luận real-time
-    const unsubscribe = getCommentsByQuestion(questionId, (commentsList: Comment[]) => {
-      console.log('💬 Comments for question', questionId, ':', commentsList.length)
-      setComments(prev => ({
-        ...prev,
-        [questionId]: commentsList
-      }))
-    })
-
-    return unsubscribe
   }
 
   // ==================== TAG MANAGEMENT ====================
@@ -272,6 +237,12 @@ export default function CommunityPage() {
         ...prev,
         tags: [...prev.tags, tag]
       }))
+      
+      // Add to popularTags if not already exists
+      if (!popularTags.includes(tag)) {
+        setPopularTags(prev => [...prev, tag])
+      }
+      
       setTagInput('')
     }
   }
@@ -283,41 +254,73 @@ export default function CommunityPage() {
     }))
   }
 
-  const filteredQuestions = questions.filter(q =>
-    q.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredQuestions = questions.filter(q => {
+  const matchesSearch = q.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     q.tags.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()))
-  )
+  
+  const matchesCategory = selectedCategory === 'All' || q.category === selectedCategory
+  
+  const matchesTag = !selectedTag || q.tags.includes(selectedTag)
+  
+  return matchesSearch && matchesCategory && matchesTag
+})
 
-  // Get unique categories from questions
-  const uniqueCategories = Array.from(new Set(questions.map(q => q.category)))
   const categories = [
     { name: 'All', count: questions.length },
-    ...uniqueCategories.map(cat => ({
-      name: cat,
-      count: questions.filter(q => q.category === cat).length
-    }))
+    { name: 'Academic', count: questions.filter(q => q.category === 'Academic').length },
+    { name: 'Vovinam', count: questions.filter(q => q.category === 'Vovinam').length },
+    { name: 'Student Life', count: questions.filter(q => q.category === 'Student Life').length },
+    { name: 'Career', count: questions.filter(q => q.category === 'Career').length },
+    { name: 'Nhạc cụ dân tộc', count: questions.filter(q => q.category === 'Nhạc cụ dân tộc').length },
+    { name: 'Rèn luyện tập trung', count: questions.filter(q => q.category === 'Rèn luyện tập trung').length },
+    { name: 'Other', count: questions.filter(q => q.category === 'Other').length }
   ]
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/5">
-      {/* Back Navigation */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <Link href="/" className="text-primary hover:underline flex items-center gap-2 text-sm">
-            ← Back to Home
-          </Link>
-        </div>
-      </div>
-
       {/* Header */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="space-y-6">
-          <div>
-            <h1 className="text-4xl sm:text-5xl font-bold mb-3">Community Q&A</h1>
-            <p className="text-lg text-muted-foreground">
-              Ask questions, share knowledge, and help fellow first-year students. Join our supportive community!
-            </p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-4xl sm:text-5xl font-bold mb-3">Community Q&A</h1>
+              <p className="text-lg text-muted-foreground">
+                Ask questions, share knowledge, and help fellow first-year students. Join our supportive community!
+              </p>
+            </div>
+            
+            {/* User Reputation */}
+            <div className="bg-gradient-to-r from-orange-100 to-orange-50 border border-orange-200 rounded-xl p-4 text-center">
+              <div className="flex items-center gap-2 text-orange-600 font-semibold mb-1">
+                <Trophy size={20} />
+                <span>Reputation</span>
+              </div>
+              <div className="text-2xl font-bold text-orange-700">{userReputation}</div>
+              <div className="text-xs text-orange-600">Points</div>
+            </div>
           </div>
+
+          {/* Community Stats */}
+          {communityStats && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-card border border-border rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-primary">{communityStats.totalQuestions}</div>
+                <div className="text-sm text-muted-foreground">Questions</div>
+              </div>
+              <div className="bg-card border border-border rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-accent">{communityStats.totalComments}</div>
+                <div className="text-sm text-muted-foreground">Comments</div>
+              </div>
+              <div className="bg-card border border-border rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-primary">{communityStats.totalUsers}</div>
+                <div className="text-sm text-muted-foreground">Users</div>
+              </div>
+              <div className="bg-card border border-border rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-accent">{communityStats.activeUsers}</div>
+                <div className="text-sm text-muted-foreground">Active</div>
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-4 flex-wrap">
             <div className="flex-1 min-w-xs">
@@ -331,6 +334,18 @@ export default function CommunityPage() {
                   className="w-full pl-10 pr-4 py-2 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors"
                 />
               </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <ArrowUpDown size={16} className="text-muted-foreground" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'newest' | 'popular' | 'mostAnswers')}
+                className="px-3 py-2 rounded-lg border border-border bg-card text-foreground focus:border-primary focus:outline-none transition-colors"
+              >
+                <option value="newest">Mới nhất</option>
+                <option value="popular">Phổ biến nhất</option>
+                <option value="mostAnswers">Nhiều trả lời nhất</option>
+              </select>
             </div>
             <Button 
               onClick={() => setShowPostForm(!showPostForm)}
@@ -373,17 +388,25 @@ export default function CommunityPage() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Danh mục</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="Academic">Học thuật</option>
-                    <option value="Vovinam">Vovinam</option>
-                    <option value="Student Life">Đời sống sinh viên</option>
-                    <option value="Career">Sự nghiệp</option>
-                    <option value="Other">Khác</option>
-                  </select>
+                  <div className="flex flex-wrap gap-2">
+                    {categories.filter(cat => cat.name !== 'All').map((cat) => (
+                      <button
+                        key={cat.name}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, category: cat.name }))}
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                          formData.category === cat.name
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {cat.name}
+                        <span className="ml-2 text-xs bg-white/20 px-2 py-1 rounded-full">
+                          {cat.count}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -401,6 +424,37 @@ export default function CommunityPage() {
 
               <div>
                 <label className="block text-sm font-medium mb-2">Tags</label>
+                
+                {/* Suggested Tags */}
+                <div className="mb-3">
+                  <p className="text-xs text-gray-600 mb-2">Tags gợi ý (click để thêm):</p>
+                  <div className="flex flex-wrap gap-2">
+                    {popularTags.map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => {
+                          if (!formData.tags.includes(tag)) {
+                            setFormData(prev => ({
+                              ...prev,
+                              tags: [...prev.tags, tag]
+                            }))
+                          }
+                        }}
+                        disabled={formData.tags.includes(tag)}
+                        className={`text-xs px-3 py-1 rounded-full transition-colors ${
+                          formData.tags.includes(tag)
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-blue-100 text-blue-800 hover:bg-blue-200 cursor-pointer'
+                        }`}
+                      >
+                        #{tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Custom Tag Input */}
                 <div className="flex gap-2 mb-2">
                   <input
                     type="text"
@@ -408,30 +462,35 @@ export default function CommunityPage() {
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleAddTag(e)}
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Nhập tag và nhấn Enter..."
+                    placeholder="Nhập tag mới và nhấn Enter..."
                   />
                   <button
                     type="button"
                     onClick={handleAddTag}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
                   >
-                    Thêm
+                    Thêm mới
                   </button>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {formData.tags.map((tag, index) => (
-                    <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center gap-2">
-                      #{tag}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveTag(tag)}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
+                
+                {/* Selected Tags */}
+                {formData.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    <span className="text-xs text-gray-600">Đã chọn:</span>
+                    {formData.tags.map((tag, index) => (
+                      <span key={index} className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm flex items-center gap-2">
+                        #{tag}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTag(tag)}
+                          className="text-green-600 hover:text-green-800"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-4">
@@ -467,7 +526,12 @@ export default function CommunityPage() {
                   {categories.map((cat) => (
                     <button
                       key={cat.name}
-                      className="w-full text-left text-sm flex items-center justify-between p-2 rounded hover:bg-secondary/50 transition-colors"
+                      onClick={() => setSelectedCategory(cat.name)}
+                      className={`w-full text-left text-sm flex items-center justify-between p-2 rounded transition-colors ${
+                        selectedCategory === cat.name
+                          ? 'bg-primary text-primary-foreground'
+                          : 'hover:bg-secondary/50'
+                      }`}
                     >
                       <span>{cat.name}</span>
                       <span className="text-muted-foreground text-xs">{cat.count}</span>
@@ -481,12 +545,17 @@ export default function CommunityPage() {
                 <h3 className="font-bold mb-4">Popular Tags</h3>
                 <div className="flex flex-wrap gap-2">
                   {['first-year', 'dorm', 'vovinam', 'budget', 'food', 'music', 'tips'].map((tag) => (
-                    <span
+                    <button
                       key={tag}
-                      className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer transition-colors"
+                      onClick={() => setSelectedTag(selectedTag === tag ? '' : tag)}
+                      className={`text-xs px-3 py-1 rounded-full transition-colors cursor-pointer ${
+                        selectedTag === tag
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-primary/10 text-primary hover:bg-primary/20'
+                      }`}
                     >
                       {tag}
-                    </span>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -516,135 +585,61 @@ export default function CommunityPage() {
             {filteredQuestions.length > 0 ? (
               <div className="space-y-4">
                 {filteredQuestions.map((question) => (
-                  <Link key={question.id} href={`/community/questions/${question.id}`}>
-                    <div className="p-6 rounded-lg border border-border bg-card hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer">
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        {/* Stats */}
-                        <div className="flex md:flex-col gap-4 md:gap-3 text-center text-sm">
-                          <div>
-                            <div className="text-xl font-bold text-primary">{question.voteCount || 0}</div>
-                            <p className="text-muted-foreground">votes</p>
-                          </div>
-                          <div>
-                            <div className="text-xl font-bold text-accent">👁</div>
-                            <p className="text-muted-foreground">views</p>
-                          </div>
+                  <div key={question.id} className="p-6 rounded-lg border border-border bg-card hover:border-primary/50 hover:shadow-lg transition-all">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      {/* Stats */}
+                      <div className="flex md:flex-col gap-4 md:gap-3 text-center text-sm">
+                        <div>
+                          <div className="text-xl font-bold text-primary">{question.voteCount || 0}</div>
+                          <p className="text-muted-foreground">votes</p>
                         </div>
+                        <div>
+                          <div className="text-xl font-bold text-accent">👁</div>
+                          <p className="text-muted-foreground">views</p>
+                        </div>
+                      </div>
 
-                        {/* Content */}
-                        <div className="md:col-span-2">
-                          <h3 className="text-lg font-bold mb-3 group-hover:text-primary transition-colors">
+                      {/* Content */}
+                      <div className="md:col-span-2">
+                        <Link href={`/community/questions/${question.id}`}>
+                          <h3 className="text-lg font-bold mb-3 group-hover:text-primary transition-colors cursor-pointer">
                             {question.title}
                           </h3>
-                          <div className="flex items-center gap-3 mb-3 flex-wrap">
-                            <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                              {question.category}
+                        </Link>
+                        <div className="flex items-center gap-3 mb-3 flex-wrap">
+                          <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                            {question.category}
+                          </span>
+                          {question.tags.map((tag: string) => (
+                            <span
+                              key={tag}
+                              className="text-xs px-2 py-1 rounded-full bg-secondary/50 text-muted-foreground"
+                            >
+                              #{tag}
                             </span>
-                            {question.tags.map((tag: string) => (
-                              <span
-                                key={tag}
-                                className="text-xs px-2 py-1 rounded-full bg-secondary/50 text-muted-foreground"
-                              >
-                                #{tag}
-                              </span>
-                            ))}
-                          </div>
-                          <p className="text-sm text-muted-foreground">
-                            Asked by <span className="font-medium">{question.authorName}</span> • {question.createdAt ? new Date(question.createdAt.seconds * 1000).toLocaleDateString() : 'Unknown'}
-                          </p>
+                          ))}
                         </div>
-
-                        {/* Vote Button */}
-                        <div className="flex items-center">
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              handleVote(question.id)
-                            }}
-                            className="w-full px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center justify-center gap-2"
-                          >
-                            <ThumbsUp size={16} />
-                            {question.voteCount || 0}
-                          </button>
-                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Asked by <span className="font-medium">{question.authorName}</span> • {question.createdAt ? new Date(question.createdAt.seconds * 1000).toLocaleDateString() : 'Unknown'}
+                        </p>
                       </div>
-                      
-                      {/* Comments Section */}
-                      <div className="border-t pt-4 mt-4">
+
+                      {/* Vote Button */}
+                      <div className="flex items-center">
                         <button
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            handleSelectQuestion(question.id)
-                          }}
-                          className="text-blue-600 hover:text-blue-800 font-medium mb-4 flex items-center gap-2"
+                          onClick={() => handleVote(question.id)}
+                          className={`w-full px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+                            question.votedBy && question.votedBy.includes(user?.uid || '')
+                              ? 'bg-orange-500 text-white hover:bg-orange-600'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
                         >
-                          <MessageCircle size={16} />
-                          {selectedQuestion === question.id ? 'Ẩn bình luận' : `Xem bình luận (${comments[question.id]?.length || 0})`}
+                          <Star size={16} fill={question.votedBy && question.votedBy.includes(user?.uid || '') ? 'white' : 'none'} />
+                          {question.voteCount || 0}
                         </button>
-
-                        {selectedQuestion === question.id && (
-                          <div className="space-y-4">
-                            {/* Comments List */}
-                            {comments[question.id]?.map((comment) => (
-                              <div key={comment.id} className="bg-gray-50 rounded-lg p-4">
-                                <div className="flex justify-between items-start mb-2">
-                                  <div className="flex-1">
-                                    <span className="font-medium text-gray-800">{comment.authorName}</span>
-                                    <span className="text-xs text-gray-500 ml-2">
-                                      {comment.createdAt ? new Date(comment.createdAt.seconds * 1000).toLocaleString() : 'Unknown'}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <button
-                                      onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        handleCommentVote(comment.id)
-                                      }}
-                                      className="px-2 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 flex items-center gap-1"
-                                    >
-                                      <ThumbsUp size={12} />
-                                      {comment.voteCount || 0}
-                                    </button>
-                                  </div>
-                                </div>
-                                <p className="text-gray-700">{comment.content}</p>
-                              </div>
-                            ))}
-
-                            {/* Comment Form */}
-                            <div className="flex gap-2">
-                              <input
-                                type="text"
-                                placeholder="Viết bình luận..."
-                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                onKeyPress={(e) => {
-                                  if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim()) {
-                                    handleSubmitComment(question.id, (e.target as HTMLInputElement).value)
-                                    ;(e.target as HTMLInputElement).value = ''
-                                  }
-                                }}
-                              />
-                              <button
-                                onClick={(e) => {
-                                  const input = (e.target as HTMLElement).previousElementSibling as HTMLInputElement
-                                  if (input.value.trim()) {
-                                    handleSubmitComment(question.id, input.value)
-                                    input.value = ''
-                                  }
-                                }}
-                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                              >
-                                Gửi
-                              </button>
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -656,6 +651,46 @@ export default function CommunityPage() {
           </div>
         </div>
       </section>
+
+      {/* Top Users */}
+      {topUsers.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 border-2 border-orange-200 rounded-2xl p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <Trophy size={28} className="text-orange-600" />
+              <h2 className="text-2xl font-bold text-gray-900">Top Contributors</h2>
+            </div>
+            <div className="grid md:grid-cols-5 gap-4">
+              {topUsers.map((user, index) => (
+                <div key={user.id} className="bg-white rounded-xl p-4 text-center border border-orange-200">
+                  <div className="relative mb-3">
+                    <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mx-auto">
+                      <span className="text-white text-xl font-bold">
+                        {user.displayName?.charAt(0)?.toUpperCase() || 'U'}
+                      </span>
+                    </div>
+                    {index < 3 && (
+                      <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${
+                        index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-orange-600'
+                      }`}>
+                        {index + 1}
+                      </div>
+                    )}
+                  </div>
+                  <div className="font-semibold text-gray-900 text-sm mb-1 truncate">
+                    {user.displayName || 'Anonymous'}
+                  </div>
+                  <div className="flex items-center justify-center gap-1 text-orange-600">
+                    <Star size={14} className="fill-current" />
+                    <span className="text-sm font-bold">{user.reputation || 0}</span>
+                  </div>
+                  <div className="text-xs text-gray-500">points</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Community Guidelines */}
       <section className="bg-card/50 border-y border-border py-12">
