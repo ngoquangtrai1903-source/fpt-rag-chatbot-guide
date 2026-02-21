@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Search, MessageCircle, ThumbsUp, Eye, Plus, Users, ArrowRight, Brain, Sparkles, Trophy, Star, ArrowUpDown } from 'lucide-react'
+import { Search, MessageCircle, ThumbsUp, Eye, Plus, Users, ArrowRight, Brain, Sparkles, Trophy, Star, ArrowUpDown, Trash2 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { 
   postQuestion,
@@ -11,7 +11,8 @@ import {
   toggleVote,
   getUserData,
   getTopUsers,
-  getCommunityStats
+  getCommunityStats,
+  deleteQuestion
 } from '@/lib/communityService'
 
 // Type definitions for Firebase data
@@ -225,6 +226,27 @@ export default function CommunityPage() {
       } else {
         alert('❌ Lỗi khi vote: ' + error.message)
       }
+    }
+  }
+
+  // ==================== DELETE QUESTION ====================
+  const handleDeleteQuestion = async (questionId: string) => {
+    if (!user) {
+      alert('Bạn cần đăng nhập để xóa câu hỏi')
+      return
+    }
+
+    if (!confirm('Bạn có chắc chắn muốn xóa câu hỏi này? Tất cả câu trả lời cũng sẽ bị xóa.')) {
+      return
+    }
+
+    try {
+      await deleteQuestion(questionId)
+      alert('✅ Đã xóa câu hỏi thành công!')
+      window.location.href = '/community'
+    } catch (error: any) {
+      console.error('Error deleting question:', error)
+      alert('❌ Lỗi khi xóa câu hỏi: ' + error.message)
     }
   }
 
@@ -625,10 +647,10 @@ export default function CommunityPage() {
                       </div>
 
                       {/* Vote Button */}
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleVote(question.id)}
-                          className={`w-full px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors ${
+                          className={`flex-1 px-3 py-2 rounded-lg flex items-center justify-center gap-2 transition-colors ${
                             question.votedBy && question.votedBy.includes(user?.uid || '')
                               ? 'bg-orange-500 text-white hover:bg-orange-600'
                               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -637,6 +659,15 @@ export default function CommunityPage() {
                           <Star size={16} fill={question.votedBy && question.votedBy.includes(user?.uid || '') ? 'white' : 'none'} />
                           {question.voteCount || 0}
                         </button>
+                        {user && question.authorId === user.uid && (
+                          <button
+                            onClick={() => handleDeleteQuestion(question.id)}
+                            className="px-3 py-2 hover:bg-red-50 rounded-lg transition-colors text-red-500"
+                            title="Xóa câu hỏi"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

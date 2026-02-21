@@ -88,18 +88,11 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
           setComments(commentsList)
         }, commentSortBy) as () => void
 
-        // Also do an initial manual fetch
-        const initialComments = await testFetchComments(questionId)
-        console.log('Initial comments fetch:', initialComments)
-        if (initialComments.length > 0) {
-          setComments(initialComments as Comment[])
-        }
-
+        setLoading(false)
         return unsubscribe
       } catch (err) {
         console.error('Error fetching question:', err)
         setError('Failed to load question')
-      } finally {
         setLoading(false)
       }
     }
@@ -287,6 +280,12 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
     try {
       await deleteComment(commentId)
       alert('✅ Đã xóa bình luận thành công!')
+      
+      // Refresh comments to show updated list
+      const updatedComments = await testFetchComments(questionId)
+      setComments(updatedComments as Comment[])
+      
+      // Force re-render
       setForceUpdate(prev => prev + 1)
     } catch (error: any) {
       console.error('Error deleting comment:', error)
