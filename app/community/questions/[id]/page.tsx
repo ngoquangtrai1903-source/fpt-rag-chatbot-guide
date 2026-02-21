@@ -13,7 +13,9 @@ import {
   toggleVote,
   testFetchComments,
   deleteQuestion,
-  deleteComment
+  deleteComment,
+  fetchCommentsRealtime,
+  fetchQuestionRealtime
 } from '@/lib/communityService'
 
 interface Question {
@@ -66,62 +68,55 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
   const resolvedParams = React.use(params)
   const questionId = resolvedParams.id
 
+  // ✅ REAL-TIME LISTENERS - Thay thế fetch một lần bằng onSnapshot
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined
+    if (!questionId) return
 
-    const fetchQuestionData = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        
-        // Fetch question details
-        const questionData = await getQuestionById(questionId)
-        if (questionData) {
-          setQuestion(questionData as Question)
-        } else {
-          setError('Question not found')
-        }
+    console.log('🚀 Setting up real-time listeners for questionId:', questionId)
 
-        // Fetch comments with real-time listener
-        unsubscribe = getCommentsByQuestion(questionId, (commentsList: Comment[]) => {
-          console.log('Comments fetched via real-time:', commentsList)
-          setComments(commentsList)
-        }, commentSortBy) as () => void
+    // Listener cho comments
+    const unsubscribeComments = fetchCommentsRealtime(questionId, (commentsData: Comment[]) => {
+      console.log('📝 Real-time comments updated:', commentsData.length, 'items')
+      setComments(commentsData)
+    }, commentSortBy)
 
-        setLoading(false)
-        return unsubscribe
-      } catch (err) {
-        console.error('Error fetching question:', err)
-        setError('Failed to load question')
-        setLoading(false)
+    // Listener cho vote count của câu hỏi
+    const unsubscribeQuestion = fetchQuestionRealtime(questionId, (questionData: Question | null) => {
+      console.log('🗳️ Real-time question updated:', questionData)
+      if (questionData) {
+        setQuestion(questionData as Question)
+      } else {
+        setError('Question not found')
       }
+    })
+
+    // Initial fetch if question is null
+    if (!question) {
+      const initialFetch = async () => {
+        try {
+          const questionData = await getQuestionById(questionId)
+          if (questionData) {
+            setQuestion(questionData as Question)
+          } else {
+            setError('Question not found')
+          }
+          setLoading(false)
+        } catch (err) {
+          console.error('Error fetching initial question:', err)
+          setError('Failed to load question')
+          setLoading(false)
+        }
+      }
+      initialFetch()
+    } else {
+      setLoading(false)
     }
 
-    if (questionId) {
-      fetchQuestionData()
-    }
-
-    // Cleanup function
+    // ⚠️ BẮT BUỘC: Cleanup khi rời trang để tránh memory leak
     return () => {
-      if (unsubscribe) {
-        unsubscribe()
-      }
-    }
-  }, [questionId])
-
-  // Re-fetch comments when sort changes
-  useEffect(() => {
-    if (questionId) {
-      const unsubscribe = getCommentsByQuestion(questionId, (commentsList: Comment[]) => {
-        console.log('Comments re-fetched with sort:', commentSortBy, commentsList)
-        setComments(commentsList)
-      }, commentSortBy) as () => void
-      
-      return () => {
-        if (unsubscribe) {
-          unsubscribe()
-        }
-      }
+      console.log('🧹 Cleaning up real-time listeners for questionId:', questionId)
+      if (unsubscribeComments) unsubscribeComments()
+      if (unsubscribeQuestion) unsubscribeQuestion()
     }
   }, [questionId, commentSortBy])
 
@@ -153,13 +148,8 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
       setIsAnswering(false)
       alert('✅ Đăng trả lời thành công!')
       
-      // Refresh comments after successful submission
-      const testComments = await testFetchComments(questionId)
-      console.log('Comments after submission:', testComments)
-      setComments(testComments as Comment[])
-      
-      // Force re-render
-      setForceUpdate(prev => prev + 1)
+      console.log('✅ Comment submitted! Real-time listener will update UI automatically.')
+      // Không cần manual refresh vì real-time listener sẽ tự động cập nhật comments
     } catch (error: any) {
       console.error('Error submitting answer:', error)
       
@@ -183,11 +173,8 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
 
     try {
       await toggleVote(questionId)
-      // Refresh question data to update vote count and votedBy
-      const updatedQuestion = await getQuestionById(questionId)
-      if (updatedQuestion) {
-        setQuestion(updatedQuestion as Question)
-      }
+      console.log('✅ Vote successful! Real-time listener will update UI automatically.')
+      // Không cần manual refresh vì real-time listener sẽ tự động cập nhật
     } catch (error: any) {
       console.error('Error voting question:', error)
       
@@ -209,9 +196,8 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
 
     try {
       await toggleCommentVote(commentId)
-      // Refresh comments to update vote count and votedBy
-      const updatedComments = await testFetchComments(questionId)
-      setComments(updatedComments as Comment[])
+      console.log('✅ Comment vote successful! Real-time listener will update UI automatically.')
+      // Không cần manual refresh vì real-time listener sẽ tự động cập nhật
     } catch (error: any) {
       console.error('Error voting comment:', error)
       
@@ -281,12 +267,8 @@ export default function QuestionDetailPage({ params }: { params: Promise<{ id: s
       await deleteComment(commentId)
       alert('✅ Đã xóa bình luận thành công!')
       
-      // Refresh comments to show updated list
-      const updatedComments = await testFetchComments(questionId)
-      setComments(updatedComments as Comment[])
-      
-      // Force re-render
-      setForceUpdate(prev => prev + 1)
+      console.log('✅ Comment deleted! Real-time listener will update UI automatically.')
+      // Không cần manual refresh vì real-time listener sẽ tự động cập nhật comments
     } catch (error: any) {
       console.error('Error deleting comment:', error)
       alert('❌ Lỗi khi xóa bình luận: ' + error.message)
