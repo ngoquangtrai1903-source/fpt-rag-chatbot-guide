@@ -46,6 +46,36 @@ export default function EventsPage() {
       image: '/events/research-connect-2026.jpg',
       facebookUrl: 'https://www.facebook.com/photo/?fbid=1323220996503556&set=a.479252194233778&locale=vi_VN',
       category: 'Cuộc thi học thuật'
+    },
+    {
+      id: 5,
+      title: 'FUDA\'S GOT TALENT 2026 - CUỘC THI TÌM KIẾM TÀI NĂNG LỚN NHẤT FPTU CHÍNH THỨC KHỞI ĐỘNG',
+      description: 'Cuộc thi tìm kiếm tài năng nổi bật nhất FPT University 2026',
+      date: '2026',
+      location: 'FPT University',
+      image: '/events/fuda-got-talent.jpg',
+      facebookUrl: 'https://www.facebook.com/photo?fbid=1335130768645912&set=a.479252204233777&locale=vi_VN',
+      category: 'Cuộc thi tài năng'
+    },
+    {
+      id: 6,
+      title: 'HỌC BỔNG TINH HOA MỞ LỐI - "TẤM HỘ CHIẾU" VỮNG CHẮC CHO SỰ NGHIỆP TOÀN CẦU 2026',
+      description: 'Cơ hội nhận học bổng giá trị cho sự nghiệp toàn cầu',
+      date: '2026',
+      location: 'FPT University',
+      image: '/events/hoc-bong-toan-cau.jpg',
+      facebookUrl: 'https://www.facebook.com/photo/?fbid=1339406024885053&set=a.1333080655517590&locale=vi_VN',
+      category: 'Học bổng'
+    },
+    {
+      id: 7,
+      title: 'BACK TO SCHOOL - HÁI LỘC KHAI XUÂN, RỘN RÀNG NĂM MỚI 2026',
+      description: 'Sự kiện chào năm mới 2026 với nhiều hoạt động hấp dẫn',
+      date: '2026',
+      location: 'FPT University',
+      image: '/events/back-to-school.png',
+      facebookUrl: 'https://www.facebook.com/photo/?fbid=1346010690891253&set=pcb.1346011134224542&locale=vi_VN',
+      category: 'Sự kiện chào năm mới'
     }
   ]
 
@@ -57,6 +87,10 @@ export default function EventsPage() {
         return 'bg-purple-100 text-purple-800 border-purple-200'
       case 'Cuộc thi học thuật':
         return 'bg-blue-100 text-blue-800 border-blue-200'
+      case 'Cuộc thi tài năng':
+        return 'bg-orange-100 text-orange-800 border-orange-200'
+      case 'Sự kiện chào năm mới':
+        return 'bg-red-100 text-red-800 border-red-200'
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200'
     }
