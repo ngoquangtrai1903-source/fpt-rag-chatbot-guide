@@ -405,7 +405,10 @@ Lập Nhóm Học Tập:
           <div className="bg-accent/10 border-2 border-accent rounded-lg p-6 text-center space-y-4">
             <h3 className="text-xl font-bold">🎙️ Podcast: "Nhật Ký LUK"</h3>
             <p className="text-muted-foreground">Nghe chia sẻ về những buổi Debate nảy lửa từ các học viên LUK Global</p>
-            <Button className="gap-2">
+            <Button 
+              className="gap-2"
+              onClick={() => window.open('https://drive.google.com/drive/folders/1Pn8ma7F1Xef8ziCpewBfA9JK1fAqD6Ny', '_blank')}
+            >
               <BookOpen size={18} />
               Nghe Podcast
             </Button>
