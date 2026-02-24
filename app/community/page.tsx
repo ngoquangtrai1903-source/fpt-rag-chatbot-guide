@@ -26,6 +26,7 @@ interface Question {
   authorEmail: string
   voteCount: number
   votedBy: string[]
+  answerCount: number
   createdAt: {
     seconds: number
     nanoseconds: number
@@ -262,7 +263,18 @@ export default function CommunityPage() {
   
   const matchesTag = !selectedTag || q.tags.includes(selectedTag)
   
-  return matchesSearch && matchesCategory && matchesTag
+  // Filter by active tab
+  let matchesTab = true
+  if (activeTab === 'popular') {
+    matchesTab = (q.voteCount || 0) >= 4 // Popular questions have 4+ votes
+  } else if (activeTab === 'unanswered') {
+    // Handle both old questions (no answerCount) and new questions
+    const answerCount = q.answerCount !== undefined ? q.answerCount : 0
+    matchesTab = answerCount === 0 // Unanswered questions have 0 answers or no answerCount field
+  }
+  // For 'recent', no additional filtering needed
+  
+  return matchesSearch && matchesCategory && matchesTag && matchesTab
 })
 
   const categories = [
@@ -336,24 +348,14 @@ export default function CommunityPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <ArrowUpDown size={16} className="text-muted-foreground" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'newest' | 'popular' | 'mostAnswers')}
-                className="px-3 py-2 rounded-lg border border-border bg-card text-foreground focus:border-primary focus:outline-none transition-colors"
+              <Button 
+                onClick={() => setShowPostForm(!showPostForm)}
+                className="gap-2"
               >
-                <option value="newest">Mới nhất</option>
-                <option value="popular">Phổ biến nhất</option>
-                <option value="mostAnswers">Nhiều trả lời nhất</option>
-              </select>
+                <Plus size={20} />
+                {showPostForm ? 'Đóng form' : 'Đăng câu hỏi'}
+              </Button>
             </div>
-            <Button 
-              onClick={() => setShowPostForm(!showPostForm)}
-              className="gap-2"
-            >
-              <Plus size={20} />
-              {showPostForm ? 'Đóng form' : 'Đăng câu hỏi'}
-            </Button>
           </div>
         </div>
       </section>
@@ -566,17 +568,21 @@ export default function CommunityPage() {
           <div className="md:col-span-3 space-y-4">
             {/* Tabs */}
             <div className="flex gap-4 border-b border-border">
-              {['recent', 'popular', 'unanswered'].map((tab) => (
+              {[
+                { id: 'recent', label: 'Mới nhất' },
+                { id: 'popular', label: 'Phổ biến' },
+                { id: 'unanswered', label: 'Chưa trả lời' }
+              ].map((tab) => (
                 <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-3 font-medium capitalize border-b-2 transition-colors ${
-                    activeTab === tab
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-4 py-3 font-medium border-b-2 transition-colors ${
+                    activeTab === tab.id
                       ? 'border-primary text-primary'
                       : 'border-transparent text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  {tab}
+                  {tab.label}
                 </button>
               ))}
             </div>
@@ -724,13 +730,7 @@ export default function CommunityPage() {
           <p className="text-muted-foreground">
             Get personalized help from our AI assistant or ask the community.
           </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Link href="/community/new">
-              <Button className="gap-2">
-                <Plus size={20} />
-                Ask New Question
-              </Button>
-            </Link>
+          <div className="flex gap-4 justify-center">
             <Link href="/assistant">
               <Button variant="outline" className="gap-2 bg-transparent">
                 Chat with AI
