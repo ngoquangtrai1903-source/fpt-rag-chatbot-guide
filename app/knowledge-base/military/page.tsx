@@ -107,7 +107,7 @@ export default function MilitaryPage() {
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold text-foreground">Kỳ Quân Sự 28 Ngày</h1>
           <p className="text-lg text-muted-foreground max-w-2xl">
-            Kỳ quân sự là \"đặc sản\" tạo nên kỷ niệm rực rỡ nhất thời sinh viên FPTU.
+            Kỳ quân sự là "đặc sản" tạo nên kỷ niệm rực rỡ nhất thời sinh viên FPTU.
           </p>
         </div>
       </section>
@@ -159,7 +159,7 @@ export default function MilitaryPage() {
             <div>
               <h2 className="text-2xl font-bold flex items-center gap-2">
                 <span className="text-3xl">🎒</span>
-                Hành lý - Những vật dụng \"cứu cánh\"
+                Hành lý - Những vật dụng "cứu cánh"
               </h2>
               <p className="text-muted-foreground mt-1">Nguyên tắc: Tối giản hành lý – Tối đa tiện ích</p>
             </div>

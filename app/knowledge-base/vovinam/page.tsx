@@ -177,7 +177,7 @@ export default function VovinamPage() {
             <div>
               <h2 className="text-2xl font-bold flex items-center gap-2">
                 <span className="text-3xl">⭐</span>
-                Bí kíp \"Vượt Ải\" - Tips từ tiền bối
+                Bí kíp "Vượt Ải" - Tips từ tiền bối
               </h2>
               <p className="text-muted-foreground mt-1">Thái độ quyết định điểm số</p>
             </div>
