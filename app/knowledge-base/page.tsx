@@ -12,7 +12,7 @@ export default function KnowledgeBasePage() {
   const guides = [
     {
       title: 'English Learning Program',
-      description: 'Complete guide to English at FPT University. From placement tests to advanced courses, master your English skills.',
+      description: 'Hướng dẫn hoàn chỉnh về tiếng Anh tại Đại học FPT. Từ bài kiểm tra xếp lớp đến các khóa học nâng cao, làm chủ kỹ năng tiếng Anh của bạn.',
       icon: '📚',
       href: '/knowledge-base/english-learning',
       sections: ['Placement Test', 'Course Levels', 'Study Tips', 'Resources'],
@@ -21,7 +21,7 @@ export default function KnowledgeBasePage() {
     },
     {
       title: 'Vovinam Guide',
-      description: 'Master the traditional Vietnamese martial art. Learn techniques, belt system, and training schedules.',
+      description: 'Làm chủ võ thuật truyền thống Việt Nam. Học các kỹ thuật, hệ thống đai và lịch tập luyện.',
       icon: '🥋',
       href: '/knowledge-base/vovinam',
       sections: ['Belt System', 'Techniques', 'Training Schedule', 'FAQ'],
@@ -30,7 +30,7 @@ export default function KnowledgeBasePage() {
     },
     {
       title: 'Music & Arts',
-      description: 'Explore cultural and musical traditions. Discover music clubs, instruments, and cultural events.',
+      description: 'Khám phá truyền thống văn hóa và âm nhạc. Tìm hiểu các câu lạc bộ nhạc, nhạc cụ và sự kiện văn hóa.',
       icon: '🎵',
       href: '/knowledge-base/music',
       sections: ['Music Clubs', 'Instruments', 'Cultural Events', 'Performances'],
@@ -39,7 +39,7 @@ export default function KnowledgeBasePage() {
     },
     {
       title: 'Military Training',
-      description: 'Physical training and discipline program. Understand requirements and physical education for first-years.',
+      description: 'Chương trình huấn luyện thể chất và kỷ luật. Hiểu yêu cầu và giáo dục thể chất cho sinh viên năm nhất.',
       icon: '💪',
       href: '/knowledge-base/military',
       sections: ['Overview', 'Schedule', 'Physical Tests', 'Tips & Tricks'],
@@ -48,7 +48,7 @@ export default function KnowledgeBasePage() {
     },
     {
       title: 'Student Life',
-      description: 'Campus life, accommodations, and tips. Essential info about dormitories, dining, and transportation.',
+      description: 'Đời sống campus, chỗ ở và mẹo. Thông tin thiết yếu về ký túc xá, ăn uống và di chuyển.',
       icon: '🏫',
       href: '/knowledge-base/student-life',
       sections: ['Housing', 'Dining', 'Transportation', 'Campus Map'],
@@ -57,7 +57,7 @@ export default function KnowledgeBasePage() {
     },
     {
       title: 'Academic Mastery',
-      description: 'FAP, FLM, SEB, EOS & study habits. Master FPT systems and develop effective study techniques.',
+      description: 'FAP, FLM, SEB, EOS và thói quen học tập. Làm chủ hệ thống FPT và phát triển kỹ thuật học tập hiệu quả.',
       icon: '🎓',
       href: '/knowledge-base/academic-mastery',
       sections: ['The Big 4', 'Study Habits', 'Exam Tips'],
@@ -85,7 +85,7 @@ export default function KnowledgeBasePage() {
             <h1 className="text-4xl sm:text-5xl font-bold">Knowledge Base</h1>
           </div>
           <p className="text-lg text-muted-foreground max-w-2xl">
-            Comprehensive guides covering all aspects of student life at FPTU. Find answers to common questions and learn from experienced students.
+            Hướng dẫn toàn diện bao gồm mọi khía cạnh của đời sống sinh viên tại FPTU. Tìm câu trả lời cho các câu hỏi phổ biến và học hỏi từ sinh viên có kinh nghiệm.
           </p>
           {!user && (
             <div className="bg-gradient-to-r from-orange-100 via-orange-50 to-orange-100 border-2 border-orange-200 rounded-2xl p-6 shadow-lg">
@@ -108,10 +108,10 @@ export default function KnowledgeBasePage() {
         <div className="bg-gradient-to-r from-orange-50 to-orange-100 border-2 border-orange-200 rounded-xl p-4 flex gap-2">
           <input
             type="text"
-            placeholder="Search guides..."
+            placeholder="Tìm kiếm hướng dẫn..."
             className="flex-1 bg-white/80 border border-orange-200 rounded-lg px-4 py-2 text-gray-800 placeholder:text-gray-500 outline-none focus:border-orange-400 transition-colors"
           />
-          <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">Search</Button>
+          <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">Tìm kiếm</Button>
         </div>
       </section>
 
@@ -159,28 +159,28 @@ export default function KnowledgeBasePage() {
       <section className="bg-gradient-to-r from-orange-100 to-orange-200 border-y-2 border-orange-300 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
           <h2 className="text-2xl font-bold text-gray-800">
-            {user ? "Can't find what you're looking for?" : "Ready to explore more?"}
+            {user ? "Không tìm thấy thứ bạn cần?" : "Sẵn sàng khám phá thêm?"}
           </h2>
           <p className="text-gray-600">
-            {user ? "Ask our AI assistant for personalized help" : "Sign in to access all guides and get personalized help"}
+            {user ? "Hỏi trợ lý AI của chúng tôi để được giúp đỡ cá nhân hóa" : "Đăng nhập để truy cập tất cả hướng dẫn và nhận giúp đỡ cá nhân hóa"}
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             {user ? (
               <Link href="/assistant">
                 <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">
-                  Chat with AI Assistant
+                  Chat với AI Assistant
                 </Button>
               </Link>
             ) : (
               <>
                 <Link href="/community">
                   <Button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">
-                    Sign In to Explore
+                    Đăng nhập để khám phá
                   </Button>
                 </Link>
                 <Link href="/assistant">
                   <Button variant="outline" className="border-orange-300 text-orange-600 hover:bg-orange-50">
-                    Try AI Assistant
+                    Thử AI Assistant
                   </Button>
                 </Link>
               </>

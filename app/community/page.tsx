@@ -26,6 +26,7 @@ interface Question {
   authorEmail: string
   voteCount: number
   votedBy: string[]
+  answerCount: number
   createdAt: {
     seconds: number
     nanoseconds: number
@@ -50,26 +51,26 @@ export default function CommunityPage() {
             </div>
             
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900">
-              Welcome to Community
+              Chào mừng đến Cộng đồng
             </h1>
             
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Join the FPTU student community to ask questions, share knowledge, and connect with fellow students.
+              Tham gia cộng đồng sinh viên FPTU để đặt câu hỏi, chia sẻ kiến thức, và kết nối với các sinh viên khác.
             </p>
             
             <div className="bg-orange-50 border-2 border-orange-200 rounded-xl p-8 max-w-md mx-auto">
               <div className="space-y-4">
                 <div className="flex items-center gap-3 text-left">
                   <MessageCircle size={20} className="text-orange-500" />
-                  <span className="text-gray-700">Ask questions and get answers</span>
+                  <span className="text-gray-700">Đặt câu hỏi và nhận câu trả lời</span>
                 </div>
                 <div className="flex items-center gap-3 text-left">
                   <ThumbsUp size={20} className="text-orange-500" />
-                  <span className="text-gray-700">Vote on helpful content</span>
+                  <span className="text-gray-700">Bình chọn cho nội dung hữu ích</span>
                 </div>
                 <div className="flex items-center gap-3 text-left">
                   <Users size={20} className="text-orange-500" />
-                  <span className="text-gray-700">Connect with 10,000+ students</span>
+                  <span className="text-gray-700">Kết nối với 10,000+ sinh viên</span>
                 </div>
               </div>
             </div>
@@ -77,13 +78,13 @@ export default function CommunityPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/login">
                 <Button size="lg" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-semibold shadow-lg">
-                  Sign In to Join
+                  Đăng nhập để tham gia
                   <ArrowRight size={20} className="ml-2" />
                 </Button>
               </Link>
               <Link href="/assistant">
                 <Button size="lg" variant="outline" className="border-2 border-orange-200 text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg font-semibold">
-                  Try AI Assistant
+                  Thử AI Assistant
                   <Brain size={20} className="ml-2" />
                 </Button>
               </Link>
@@ -262,7 +263,18 @@ export default function CommunityPage() {
   
   const matchesTag = !selectedTag || q.tags.includes(selectedTag)
   
-  return matchesSearch && matchesCategory && matchesTag
+  // Filter by active tab
+  let matchesTab = true
+  if (activeTab === 'popular') {
+    matchesTab = (q.voteCount || 0) >= 4 // Popular questions have 4+ votes
+  } else if (activeTab === 'unanswered') {
+    // Handle both old questions (no answerCount) and new questions
+    const answerCount = q.answerCount !== undefined ? q.answerCount : 0
+    matchesTab = answerCount === 0 // Unanswered questions have 0 answers or no answerCount field
+  }
+  // For 'recent', no additional filtering needed
+  
+  return matchesSearch && matchesCategory && matchesTag && matchesTab
 })
 
   const categories = [
@@ -336,24 +348,14 @@ export default function CommunityPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <ArrowUpDown size={16} className="text-muted-foreground" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'newest' | 'popular' | 'mostAnswers')}
-                className="px-3 py-2 rounded-lg border border-border bg-card text-foreground focus:border-primary focus:outline-none transition-colors"
+              <Button 
+                onClick={() => setShowPostForm(!showPostForm)}
+                className="gap-2"
               >
-                <option value="newest">Mới nhất</option>
-                <option value="popular">Phổ biến nhất</option>
-                <option value="mostAnswers">Nhiều trả lời nhất</option>
-              </select>
+                <Plus size={20} />
+                {showPostForm ? 'Đóng form' : 'Đăng câu hỏi'}
+              </Button>
             </div>
-            <Button 
-              onClick={() => setShowPostForm(!showPostForm)}
-              className="gap-2"
-            >
-              <Plus size={20} />
-              {showPostForm ? 'Đóng form' : 'Đăng câu hỏi'}
-            </Button>
           </div>
         </div>
       </section>
@@ -566,17 +568,21 @@ export default function CommunityPage() {
           <div className="md:col-span-3 space-y-4">
             {/* Tabs */}
             <div className="flex gap-4 border-b border-border">
-              {['recent', 'popular', 'unanswered'].map((tab) => (
+              {[
+                { id: 'recent', label: 'Mới nhất' },
+                { id: 'popular', label: 'Phổ biến' },
+                { id: 'unanswered', label: 'Chưa trả lời' }
+              ].map((tab) => (
                 <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-3 font-medium capitalize border-b-2 transition-colors ${
-                    activeTab === tab
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`px-4 py-3 font-medium border-b-2 transition-colors ${
+                    activeTab === tab.id
                       ? 'border-primary text-primary'
                       : 'border-transparent text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  {tab}
+                  {tab.label}
                 </button>
               ))}
             </div>
@@ -724,13 +730,7 @@ export default function CommunityPage() {
           <p className="text-muted-foreground">
             Get personalized help from our AI assistant or ask the community.
           </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Link href="/community/new">
-              <Button className="gap-2">
-                <Plus size={20} />
-                Ask New Question
-              </Button>
-            </Link>
+          <div className="flex gap-4 justify-center">
             <Link href="/assistant">
               <Button variant="outline" className="gap-2 bg-transparent">
                 Chat with AI

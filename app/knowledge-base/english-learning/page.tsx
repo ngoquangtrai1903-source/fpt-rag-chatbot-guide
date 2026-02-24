@@ -343,7 +343,7 @@ Lập Nhóm Học Tập:
             >
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="font-semibold">Fanpage LUK Global (share link)</p>
+                  <p className="font-semibold">Preparatory English Department</p>
                   <p className="text-xs text-muted-foreground">facebook.com</p>
                 </div>
                 <ExternalLink size={16} className="text-primary shrink-0" />
@@ -407,7 +407,7 @@ Lập Nhóm Học Tập:
             <p className="text-muted-foreground">Nghe chia sẻ về những buổi Debate nảy lửa từ các học viên LUK Global</p>
             <Button 
               className="gap-2"
-              onClick={() => window.open('https://drive.google.com/drive/folders/1Pn8ma7F1Xef8ziCpewBfA9JK1fAqD6Ny', '_blank')}
+              onClick={() => window.open('https://www.youtube.com/watch?v=EzLtrl6JCcc', '_blank')}
             >
               <BookOpen size={18} />
               Nghe Podcast
