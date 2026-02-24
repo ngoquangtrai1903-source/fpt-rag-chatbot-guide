@@ -50,26 +50,26 @@ export default function CommunityPage() {
             </div>
             
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900">
-              Welcome to Community
+              Chào mừng đến Cộng đồng
             </h1>
             
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Join the FPTU student community to ask questions, share knowledge, and connect with fellow students.
+              Tham gia cộng đồng sinh viên FPTU để đặt câu hỏi, chia sẻ kiến thức, và kết nối với các sinh viên khác.
             </p>
             
             <div className="bg-orange-50 border-2 border-orange-200 rounded-xl p-8 max-w-md mx-auto">
               <div className="space-y-4">
                 <div className="flex items-center gap-3 text-left">
                   <MessageCircle size={20} className="text-orange-500" />
-                  <span className="text-gray-700">Ask questions and get answers</span>
+                  <span className="text-gray-700">Đặt câu hỏi và nhận câu trả lời</span>
                 </div>
                 <div className="flex items-center gap-3 text-left">
                   <ThumbsUp size={20} className="text-orange-500" />
-                  <span className="text-gray-700">Vote on helpful content</span>
+                  <span className="text-gray-700">Bình chọn cho nội dung hữu ích</span>
                 </div>
                 <div className="flex items-center gap-3 text-left">
                   <Users size={20} className="text-orange-500" />
-                  <span className="text-gray-700">Connect with 10,000+ students</span>
+                  <span className="text-gray-700">Kết nối với 10,000+ sinh viên</span>
                 </div>
               </div>
             </div>
@@ -77,13 +77,13 @@ export default function CommunityPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/login">
                 <Button size="lg" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-semibold shadow-lg">
-                  Sign In to Join
+                  Đăng nhập để tham gia
                   <ArrowRight size={20} className="ml-2" />
                 </Button>
               </Link>
               <Link href="/assistant">
                 <Button size="lg" variant="outline" className="border-2 border-orange-200 text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg font-semibold">
-                  Try AI Assistant
+                  Thử AI Assistant
                   <Brain size={20} className="ml-2" />
                 </Button>
               </Link>

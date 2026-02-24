@@ -27,55 +27,55 @@ export default function Home() {
     {
       icon: BookOpen,
       title: 'Knowledge Base',
-      description: 'Comprehensive guides covering all aspects of student life at FPTU',
+      description: 'Tổng hợp hướng dẫn chi tiết về mọi khía cạnh của đời sống sinh viên tại FPTU',
       color: 'from-blue-500 to-blue-600'
     },
     {
       icon: Users,
       title: 'Community Q&A',
-      description: 'Connect with fellow students and get answers to your questions',
+      description: 'Kết nối với sinh viên khác và nhận câu trả lời cho các thắc mắc của bạn',
       color: 'from-green-500 to-green-600'
     },
     {
       icon: MessageSquare,
       title: 'AI Assistant',
-      description: 'Get personalized help and guidance 24/7 from our AI assistant',
+      description: 'Nhận sự giúp đỡ và hướng dẫn cá nhân hóa 24/7 từ trợ lý AI của chúng tôi',
       color: 'from-purple-500 to-purple-600'
     },
     {
       icon: Zap,
       title: 'Real-time Updates',
-      description: 'Stay informed with the latest events and announcements',
+      description: 'Cập nhật thông tin với các sự kiện và thông báo mới nhất',
       color: 'from-orange-500 to-orange-600'
     }
   ]
 
   const benefits = [
-    '🎯 Personalized learning paths',
-    '🤝 Active student community',
-    '🤖 24/7 AI assistance',
-    '📚 Comprehensive resources',
-    '🏆 Track your progress',
-    '🔒 Secure and private'
+    '🎯 Lộ trình học tập cá nhân hóa',
+    '🤝 Cộng đồng sinh viên năng động',
+    '🤖 Trợ giúp AI 24/7',
+    '📚 Tài nguyên toàn diện',
+    '🏆 Theo dõi tiến độ của bạn',
+    '🔒 Bảo mật và riêng tư'
   ]
 
   const testimonials = [
     {
       name: 'Nguyễn Văn A',
-      role: 'IT Student',
-      content: 'This platform helped me navigate FPTU life so much better. The AI assistant is incredible!',
+      role: 'Sinh viên IT',
+      content: 'Nền tảng này đã giúp tôi điều hướng cuộc sống FPTU tốt hơn rất nhiều. Trợ lý AI thật tuyệt vời!',
       rating: 5
     },
     {
       name: 'Trần Thị B',
-      role: 'Business Student',
-      content: 'The community Q&A section saved me countless times. Great resource for all students!',
+      role: 'Sinh viên Kinh doanh',
+      content: 'Phần Community Q&A đã cứu tôi vô số lần. Tài nguyên tuyệt vời cho tất cả sinh viên!',
       rating: 5
     },
     {
       name: 'Lê Văn C',
-      role: 'Design Student',
-      content: 'Knowledge Base has everything I need. From English to Vovinam, it\'s all here!',
+      role: 'Sinh viên Thiết kế',
+      content: 'Knowledge Base có mọi thứ tôi cần. Từ tiếng Anh đến Vovinam, tất cả đều ở đây!',
       rating: 5
     }
   ]
@@ -90,7 +90,7 @@ export default function Home() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium">
               <Sparkles size={16} />
-              <span>Your FPTU Survival Companion</span>
+              <span>Đồng hành cùng FPTU của bạn</span>
             </div>
 
             {/* Main Heading */}
@@ -108,8 +108,8 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-xl sm:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium">
-                Your all-in-one companion for navigating FPT University life. 
-                <span className="block text-orange-600 font-semibold">From academics to campus life, we've got you covered.</span>
+                Người bạn đồng hành toàn diện cho cuộc sống Đại học FPT. 
+                <span className="block text-orange-600 font-semibold">Từ học thuật đến đời sống sinh viên, chúng tôi có tất cả.</span>
               </p>
             </div>
 
@@ -119,13 +119,13 @@ export default function Home() {
                 <div className="text-center">
                   <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-6 py-3 rounded-full text-lg font-medium">
                     <Sparkles size={20} />
-                    <span>Welcome back! You're all set to explore</span>
+                    <span>Chào mừng trở lại! Bạn đã sẵn sàng khám phá</span>
                   </div>
                 </div>
               ) : (
                 <Link href="/login">
                   <Button size="lg" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all">
-                    Get Started Now
+                    Bắt đầu ngay
                     <Rocket size={20} className="ml-2" />
                   </Button>
                 </Link>
@@ -133,7 +133,7 @@ export default function Home() {
               
               <Link href="/assistant">
                 <Button size="lg" variant="outline" className="border-2 border-orange-200 text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg font-semibold">
-                  Try AI Assistant
+                  Thử AI Assistant
                   <Brain size={20} className="ml-2" />
                 </Button>
               </Link>
@@ -142,10 +142,10 @@ export default function Home() {
             {/* Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mt-16">
               {[
-                { number: '10K+', label: 'Active Students' },
-                { number: '500+', label: 'Knowledge Articles' },
-                { number: '24/7', label: 'AI Support' },
-                { number: '98%', label: 'Satisfaction Rate' }
+                { number: '10K+', label: 'Sinh viên hoạt động' },
+                { number: '500+', label: 'Bài viết kiến thức' },
+                { number: '24/7', label: 'Hỗ trợ AI' },
+                { number: '98%', label: 'Tỷ lệ hài lòng' }
               ].map((stat, index) => (
                 <div key={index} className="text-center">
                   <div className="text-3xl sm:text-4xl font-bold text-orange-600">{stat.number}</div>
@@ -162,10 +162,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Everything You Need in One Place
+              Mọi thứ bạn cần trong một nơi
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover powerful features designed to make your FPTU journey successful and enjoyable
+              Khám phá các tính năng mạnh mẽ được thiết kế để làm cho hành trình FPTU của bạn thành công và thú vị
             </p>
           </div>
 
