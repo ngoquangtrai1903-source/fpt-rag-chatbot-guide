@@ -8,6 +8,26 @@ import { Calendar, ExternalLink, MapPin, Clock, Users } from 'lucide-react'
 export default function EventsPage() {
   const events = [
     {
+      id: 8,
+      title: 'VŨ TRỤ NGÀNH MỚI" CÔNG NGHỆ TRUYỀN THÔNG: BẬT MỞ NĂNG LƯỢNG, BẬT SỨC SÁNG TẠO ✨',
+      description: 'Trong kỷ nguyên số, công nghệ và truyền thông liên tục thay đổi cách mọi người kết nối, làm việc và tiếp nhận thông tin. Thị trường lao động ngày càng cần những nhân sự vững chuyên môn, tư duy linh hoạt và làm chủ công nghệ. Đứng trước yêu cầu đó, Trường Đại học FPT tập trung vào xây dựng chương trình đào tạo ngành Công nghệ Truyền thông theo hướng thực tiễn và phù hợp với nhu cầu của doanh nghiệp.',
+      date: '2026',
+      location: 'FPT University',
+      image: '/events/nganh-moi-fpt.jpg',
+      facebookUrl: 'https://www.facebook.com/daihocfptdanang/posts/pfbid02CpoN739YiL5wtbHeMQwtpFMWyHvDXL3Gfi1uzSBoFTJ6kRNUUEg6Mh4qYou1B3Nsl?locale=vi_VN',
+      category: 'Ngành mới'
+    },
+    {
+      id: 9,
+      title: 'TÌM KIẾM BAN TỔ CHỨC CUỘC THI MISS FPTU 2026 👑',
+      description: 'Cuộc thi sắc đẹp dành cho sinh viên Trường Đại học FPT Đà Nẵng chính thức trở lại!',
+      date: '03.03.2026',
+      location: 'FPT University',
+      image: '/events/cuoc-thi-miss-fpt.jpg',
+      facebookUrl: 'https://www.facebook.com/photo?fbid=1348844717274517&set=a.479252204233777&locale=vi_VN',
+      category: 'Cuộc thi sắc đẹp'
+    },
+    {
       id: 1,
       title: 'CHÍNH THỨC MỞ CỔNG NỘP HỒ SƠ CHƯƠNG TRÌNH TÌM KIẾM NHÂN TÀI KỶ NGUYÊN SỐ VIỆT NAM - HỌC BỔNG NGUYỄN VĂN ĐẠO',
       description: 'Cơ hội nhận học bổng giá trị cho sinh viên tài năng',
@@ -81,6 +101,10 @@ export default function EventsPage() {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
+      case 'Ngành mới':
+        return 'bg-indigo-100 text-indigo-800 border-indigo-200'
+      case 'Cuộc thi sắc đẹp':
+        return 'bg-pink-100 text-pink-800 border-pink-200'
       case 'Học bổng':
         return 'bg-green-100 text-green-800 border-green-200'
       case 'Lễ vinh danh':
