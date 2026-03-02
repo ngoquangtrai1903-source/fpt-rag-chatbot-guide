@@ -40,62 +40,7 @@ interface Question {
 export default function CommunityPage() {
   const { user } = useAuth()
 
-  // If not logged in, show auth prompt
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-background via-orange-50/20 to-orange-100/10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center space-y-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full mb-6">
-              <Users size={40} className="text-white" />
-            </div>
-            
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900">
-              Chào mừng đến Cộng đồng
-            </h1>
-            
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Tham gia cộng đồng sinh viên FPTU để đặt câu hỏi, chia sẻ kiến thức, và kết nối với các sinh viên khác.
-            </p>
-            
-            <div className="bg-orange-50 border-2 border-orange-200 rounded-xl p-8 max-w-md mx-auto">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 text-left">
-                  <MessageCircle size={20} className="text-orange-500" />
-                  <span className="text-gray-700">Đặt câu hỏi và nhận câu trả lời</span>
-                </div>
-                <div className="flex items-center gap-3 text-left">
-                  <ThumbsUp size={20} className="text-orange-500" />
-                  <span className="text-gray-700">Bình chọn cho nội dung hữu ích</span>
-                </div>
-                <div className="flex items-center gap-3 text-left">
-                  <Users size={20} className="text-orange-500" />
-                  <span className="text-gray-700">Kết nối với 10,000+ sinh viên</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/login">
-                <Button size="lg" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-semibold shadow-lg">
-                  Đăng nhập để tham gia
-                  <ArrowRight size={20} className="ml-2" />
-                </Button>
-              </Link>
-              <Link href="/assistant">
-                <Button size="lg" variant="outline" className="border-2 border-orange-200 text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg font-semibold">
-                  Thử AI Assistant
-                  <Brain size={20} className="ml-2" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // Original community page content for logged-in users
+  // ==================== ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL LOGIC ====================
   const [activeTab, setActiveTab] = useState('recent')
   const [searchQuery, setSearchQuery] = useState('')
   const [questions, setQuestions] = useState<Question[]>([])
@@ -155,6 +100,61 @@ export default function CommunityPage() {
 
     return () => unsubscribe()
   }, [user, sortBy])
+
+  // If not logged in, show auth prompt (AFTER all hooks)
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background via-orange-50/20 to-orange-100/10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center space-y-8">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full mb-6">
+              <Users size={40} className="text-white" />
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900">
+              Chào mừng đến Cộng đồng
+            </h1>
+            
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Tham gia cộng đồng sinh viên FPTU để đặt câu hỏi, chia sẻ kiến thức, và kết nối với các sinh viên khác.
+            </p>
+            
+            <div className="bg-orange-50 border-2 border-orange-200 rounded-xl p-8 max-w-md mx-auto">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 text-left">
+                  <MessageCircle size={20} className="text-orange-500" />
+                  <span className="text-gray-700">Đặt câu hỏi và nhận câu trả lời</span>
+                </div>
+                <div className="flex items-center gap-3 text-left">
+                  <ThumbsUp size={20} className="text-orange-500" />
+                  <span className="text-gray-700">Bình chọn cho nội dung hữu ích</span>
+                </div>
+                <div className="flex items-center gap-3 text-left">
+                  <Users size={20} className="text-orange-500" />
+                  <span className="text-gray-700">Kết nối với 10,000+ sinh viên</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/login">
+                <Button size="lg" className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-4 text-lg font-semibold shadow-lg">
+                  Đăng nhập để tham gia
+                  <ArrowRight size={20} className="ml-2" />
+                </Button>
+              </Link>
+              <Link href="/assistant">
+                <Button size="lg" variant="outline" className="border-2 border-orange-200 text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg font-semibold">
+                  Thử AI Assistant
+                  <Brain size={20} className="ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   // ==================== POST QUESTION ====================
   const handlePostQuestion = async (e: React.FormEvent) => {
