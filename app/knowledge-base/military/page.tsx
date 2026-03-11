@@ -25,7 +25,7 @@ export default function MilitaryPage() {
   // Nội dung giữ nguyên từ trang gốc, chỉ đổi cách trình bày (dashboard)
   const overviewCards = [
     { id: 'duration', title: '28 Ngày', desc: 'Thời lượng tập trung (4 tuần liên tục)', icon: Zap, color: 'border-primary/30 bg-primary/5' },
-    { id: 'location', title: 'Hòa Lạc', desc: 'Khu quân sự tập trung (hoặc khu liên kết)', icon: Shield, color: 'border-accent/30 bg-accent/5' },
+    { id: 'location', title: 'Thanh Khê - Đà Sơn', desc: 'Khu quân sự tập trung (hoặc khu liên kết)', icon: Shield, color: 'border-accent/30 bg-accent/5' },
     { id: 'required', title: 'Bắt buộc', desc: 'Điều kiện để xét tốt nghiệp', icon: CheckCircle2, color: 'border-primary/20 bg-primary/5' },
   ]
 

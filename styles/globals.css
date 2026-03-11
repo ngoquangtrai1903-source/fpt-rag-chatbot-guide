@@ -127,3 +127,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  /* Fix for ChatMarkdown bullets alignment */
+  .prose ul {
+    list-style-position: outside;
+    padding-left: 1.5em;
+  }
+  
+  .prose ol {
+    list-style-position: outside;
+    padding-left: 1.5em;
+  }
+  
+  .prose li {
+    display: list-item;
+    margin-left: 0;
+    padding-left: 0.5em;
+  }
+  
+  .prose li::marker {
+    color: #374151;
+    font-weight: normal;
+  }
+}

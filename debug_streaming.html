@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Streaming Issues</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; cursor: pointer; }
+        #output { background: #f8f9fa; padding: 10px; height: 200px; overflow-y: auto; border: 1px solid #ccc; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Streaming Issues</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Regular Chat Endpoint</h3>
+        <button onclick="testRegularChat()">Test /chat</button>
+        <div id="regularResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 2: Streaming Endpoint</h3>
+        <button onclick="testStreaming()">Test /chat/stream</button>
+        <div id="streamResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 3: Different Messages</h3>
+        <button onclick="testMessage('Học vovinam ở FPTU như thế nào?')">Vovinam</button>
+        <button onclick="testMessage('IELTS 6.0 cần gì?')">IELTS</button>
+        <button onclick="testMessage('KTX FPT có gì hay?')">KTX</button>
+        <button onclick="testMessage('hello')">Hello</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>Console Output</h3>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        const output = document.getElementById('output');
+        
+        function log(message) {
+            output.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+            output.scrollTop = output.scrollHeight;
+        }
+
+        async function testRegularChat() {
+            const resultDiv = document.getElementById('regularResult');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('http://localhost:10000/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: 'Học vovinam ở FPTU như thế nào?',
+                        history: []
+                    }),
+                });
+
+                const data = await response.json();
+                resultDiv.innerHTML = `<div class="success">✅ Status: ${response.status}<br>Reply: ${data.reply.substring(0, 100)}...</div>`;
+                log(`✅ Regular chat success: ${response.status}`);
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+                log(`❌ Regular chat error: ${error.message}`);
+            }
+        }
+
+        async function testStreaming() {
+            const resultDiv = document.getElementById('streamResult');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('http://localhost:10000/chat/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: 'Học vovinam ở FPTU như thế nào?',
+                        history: []
+                    }),
+                });
+
+                log(`📡 Streaming response status: ${response.status}`);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `<div class="error">❌ Status: ${response.status}<br>Error: ${errorText}</div>`;
+                    log(`❌ Streaming error: ${errorText}`);
+                    return;
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let chunkCount = 0;
+                let errorCount = 0;
+                let textAccumulated = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value, { stream: true });
+                    chunkCount++;
+                    
+                    const lines = chunk.split("\n\n").filter(line => line.trim());
+                    
+                    for (const line of lines) {
+                        if (!line.startsWith("data: ")) continue;
+                        
+                        try {
+                            const payload = JSON.parse(line.slice(6));
+                            
+                            if (payload.type === "chunk") {
+                                textAccumulated += payload.text || '';
+                            } else if (payload.type === "done") {
+                                log('✅ Done signal received');
+                            } else if (payload.type === "error") {
+                                errorCount++;
+                                log(`❌ Backend error: ${payload.text}`);
+                            }
+                        } catch (parseError) {
+                            log(`❌ Parse error: ${parseError}`);
+                        }
+                    }
+                }
+
+                if (errorCount > 0) {
+                    resultDiv.innerHTML = `<div class="error">❌ Received ${errorCount} errors<br>Chunks: ${chunkCount}<br>Text: ${textAccumulated.substring(0, 100)}...</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="success">✅ Success!<br>Chunks: ${chunkCount}<br>Text: ${textAccumulated.substring(0, 100)}...</div>`;
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Network error: ${error.message}</div>`;
+                log(`❌ Streaming network error: ${error.message}`);
+            }
+        }
+
+        async function testMessage(message) {
+            log(`🧪 Testing message: "${message}"`);
+            
+            try {
+                const response = await fetch('http://localhost:10000/chat/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: message,
+                        history: []
+                    }),
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let hasError = false;
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split("\n\n").filter(line => line.trim());
+                    
+                    for (const line of lines) {
+                        if (!line.startsWith("data: ")) continue;
+                        
+                        try {
+                            const payload = JSON.parse(line.slice(6));
+                            
+                            if (payload.type === "error") {
+                                hasError = true;
+                                log(`❌ Message "${message}" error: ${payload.text}`);
+                                break;
+                            }
+                        } catch (parseError) {
+                            log(`❌ Parse error for "${message}": ${parseError}`);
+                        }
+                    }
+                    
+                    if (hasError) break;
+                }
+                
+                if (!hasError) {
+                    log(`✅ Message "${message}" success`);
+                }
+                
+            } catch (error) {
+                log(`❌ Message "${message}" network error: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -61,19 +61,19 @@ export default function Home() {
 
   const testimonials = [
     {
-      name: 'Nguyễn Văn A',
+      name: 'Phạm Tiến Dũng',
       role: 'Sinh viên IT',
       content: 'Nền tảng này đã giúp tôi điều hướng cuộc sống FPTU tốt hơn rất nhiều. Trợ lý AI thật tuyệt vời!',
       rating: 5
     },
     {
-      name: 'Trần Thị B',
+      name: 'Lê Hữu Trí',
       role: 'Sinh viên Kinh doanh',
       content: 'Phần Community Q&A đã cứu tôi vô số lần. Tài nguyên tuyệt vời cho tất cả sinh viên!',
       rating: 5
     },
     {
-      name: 'Lê Văn C',
+      name: 'Lê Hoàng Dương',
       role: 'Sinh viên Thiết kế',
       content: 'Knowledge Base có mọi thứ tôi cần. Từ tiếng Anh đến Vovinam, tất cả đều ở đây!',
       rating: 5

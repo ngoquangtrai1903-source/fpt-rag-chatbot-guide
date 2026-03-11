@@ -2,9 +2,11 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { MessageCircle, Bot, User, Send, Clock, Loader2, Brain, Sparkles, ArrowRight, Users, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Send, MessageCircle, Loader2, Brain, Bot, ArrowRight, Users, Sparkles, User, Clock, CheckCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { flushSync } from 'react-dom'
+import ChatMarkdown from '@/components/ChatMarkdown'
 
 interface Message {
   id: string
@@ -59,10 +61,15 @@ export default function AssistantPage() {
   const sendMessage = async (messageText: string) => {
     if (!messageText.trim() || isLoading) return
 
+    const trimmedMessage = messageText.trim()
+    const historyForRequest = messages
+      .slice(-4)
+      .map((m) => ({ role: m.role, content: m.content }))
+
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: messageText.trim(),
+      content: trimmedMessage,
       timestamp: new Date()
     }
 
@@ -82,9 +89,8 @@ export default function AssistantPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          message: messageText,
-          user_id: user?.uid || 'anonymous',
-          session_id: 'web_chat_' + Date.now()
+          message: trimmedMessage,
+          history: historyForRequest
         }),
       })
 
@@ -116,7 +122,7 @@ export default function AssistantPage() {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: '🤖 Xin lỗi, không thể kết nối đến server Python. Bạn vui lòng kiểm tra lại backend URL và đảm bảo backend đang chạy nhé!',
+        content: '🍊 Xin lỗi FPTU Buddy đang gặp sự cố kết nối!\n\nĐường truyền mạng của bạn có thể đang yếu hoặc server đang bận. Bạn vui lòng:\n\n💡 **Thử lại sau vài giây**\n🔄 **Kiểm tra kết nối internet**\n📶 **Chuyển sang mạng khác nếu cần**\n\nMình sẽ sẵn sàng trả lời ngay khi kết nối ổn định trở lại! 😊',
         timestamp: new Date()
       }
 
@@ -240,20 +246,7 @@ export default function AssistantPage() {
       {/* Connection Status Bar */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-4 py-2">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'} animate-pulse`}></div>
-              <span className="text-sm text-gray-600">
-                Backend: {isConnected ? 'Đã kết nối' : 'Chưa kết nối'}
-              </span>
-            </div>
-            {responseTime && (
-              <div className="flex items-center gap-1 text-sm text-gray-500">
-                <Clock size={14} />
-                <span>{responseTime}ms</span>
-              </div>
-            )}
-          </div>
+          <div />
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Users size={14} />
             <span>{user.displayName || user.email}</span>
@@ -305,8 +298,14 @@ export default function AssistantPage() {
                         : 'bg-white border border-gray-200 text-gray-800 rounded-bl-sm shadow-md'
                     }`}
                   >
-                    <div className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-                      {message.content}
+                    <div className="text-sm leading-relaxed">
+                      {message.role === 'assistant' ? (
+                        <ChatMarkdown content={message.content} />
+                      ) : (
+                        <div className="whitespace-pre-wrap break-words">
+                          {message.content}
+                        </div>
+                      )}
                     </div>
                     <div className={`text-xs mt-2 flex items-center gap-1 ${
                       message.role === 'user' ? 'text-blue-100' : 'text-gray-400'

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chunk Analysis</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #output { background: #f8f9fa; padding: 10px; height: 400px; overflow-y: auto; border: 1px solid #ccc; font-family: monospace; font-size: 12px; }
+        .chunk { background: #e3f2fd; margin: 2px 0; padding: 2px; }
+        .text { background: #f3e5f5; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Chunk Analysis</h1>
+    <button onclick="analyzeChunks()">Analyze Chunks</button>
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+        
+        function log(message, className = '') {
+            const div = document.createElement('div');
+            div.className = className;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}.${Date.now() % 1000}</strong>: ${message}`;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        async function analyzeChunks() {
+            output.innerHTML = '';
+            log('🚀 Starting chunk analysis...');
+            
+            try {
+                const response = await fetch('http://localhost:10000/chat/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: 'Học vovinam ở FPTU như thế nào?',
+                        history: []
+                    }),
+                });
+
+                log(`📡 Response status: ${response.status}`);
+                log(`📡 Content-Type: ${response.headers.get('content-type')}`);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    log(`❌ Error: ${errorText}`);
+                    return;
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let chunkCount = 0;
+                let totalChars = 0;
+                let startTime = Date.now();
+                let lastChunkTime = startTime;
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) {
+                        log('🏁 Stream ended');
+                        break;
+                    }
+                    
+                    const currentTime = Date.now();
+                    const timeSinceLastChunk = currentTime - lastChunkTime;
+                    lastChunkTime = currentTime;
+                    
+                    const chunk = decoder.decode(value, { stream: true });
+                    chunkCount++;
+                    
+                    log(`📦 Chunk #${chunkCount} (${value.length} bytes, ${timeSinceLastChunk}ms since last):`, 'chunk');
+                    log(`📄 Raw: ${JSON.stringify(chunk.substring(0, 200))}`, 'chunk');
+                    
+                    const lines = chunk.split("\n\n").filter(line => line.trim());
+                    
+                    for (const line of lines) {
+                        if (!line.startsWith("data: ")) continue;
+                        
+                        try {
+                            const payload = JSON.parse(line.slice(6));
+                            
+                            if (payload.type === "chunk") {
+                                totalChars += (payload.text || '').length;
+                                log(`🔤 Text chunk: "${payload.text}" (${payload.text.length} chars)`, 'text');
+                                log(`📝 Total so far: ${totalChars} chars`, 'text');
+                            } else if (payload.type === "done") {
+                                log('✅ Done signal received');
+                            } else if (payload.type === "error") {
+                                log(`❌ Error: ${payload.text}`);
+                            }
+                        } catch (parseError) {
+                            log(`❌ Parse error: ${parseError}`);
+                        }
+                    }
+                }
+                
+                const totalTime = Date.now() - startTime;
+                log(`📊 Summary: ${chunkCount} chunks, ${totalChars} chars, ${totalTime}ms total`);
+                log(`📊 Average: ${(totalTime/chunkCount).toFixed(1)}ms per chunk, ${(totalChars/totalTime*1000).toFixed(1)} chars/sec`);
+                
+            } catch (error) {
+                log(`❌ Network error: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
