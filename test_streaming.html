@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .chat-container { border: 1px solid #ccc; height: 400px; overflow-y: auto; padding: 10px; margin: 10px 0; background: #f9f9f9; }
+        .message { margin: 5px 0; padding: 8px; border-radius: 8px; }
+        .user { background: #007bff; color: white; text-align: right; }
+        .assistant { background: #f1f1f1; color: black; }
+        .typing { opacity: 0.7; }
+        input { width: 70%; padding: 10px; }
+        button { width: 25%; padding: 10px; }
+        .debug { background: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; margin: 10px 0; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Streaming Chat Test</h1>
+    
+    <div class="chat-container" id="chatContainer"></div>
+    
+    <div>
+        <input type="text" id="messageInput" placeholder="Nhập tin nhắn..." value="Học vovinam ở FPTU như thế nào?">
+        <button onclick="sendMessage()">Gửi</button>
+    </div>
+    
+    <div class="debug" id="debugInfo">Debug info sẽ xuất hiện ở đây...</div>
+
+    <script>
+        const chatContainer = document.getElementById('chatContainer');
+        const messageInput = document.getElementById('messageInput');
+        const debugInfo = document.getElementById('debugInfo');
+        
+        let messages = [];
+        
+        function addMessage(role, content, isStreaming = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role} ${isStreaming ? 'typing' : ''}`;
+            messageDiv.innerHTML = `
+                <strong>${role}:</strong> ${content}
+                ${isStreaming ? '<span class="typing-cursor">|</span>' : ''}
+            `;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return messageDiv;
+        }
+        
+        function log(message) {
+            console.log(message);
+            debugInfo.innerHTML += new Date().toLocaleTimeString() + ': ' + message + '<br>';
+        }
+        
+        async function sendMessage() {
+            const messageText = messageInput.value.trim();
+            if (!messageText) return;
+            
+            // Add user message
+            addMessage('user', messageText);
+            log('🚀 Sending: ' + messageText);
+            
+            // Add empty assistant message
+            const assistantDiv = addMessage('assistant', '', true);
+            
+            try {
+                const response = await fetch('http://localhost:10000/chat/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: messageText,
+                        history: messages.map(msg => ({ role: msg.role, content: msg.content }))
+                    }),
+                });
+                
+                log('📡 Response status: ' + response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    log('❌ Error: ' + errorText);
+                    assistantDiv.innerHTML = '<strong>assistant:</strong> ❌ Error: ' + errorText;
+                    return;
+                }
+                
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let accumulatedText = '';
+                
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value, { stream: true });
+                    log('📦 Chunk: ' + chunk.substring(0, 100));
+                    
+                    const lines = chunk.split("\n\n").filter(line => line.trim());
+                    
+                    for (const line of lines) {
+                        if (!line.startsWith("data: ")) continue;
+                        
+                        try {
+                            const payload = JSON.parse(line.slice(6));
+                            log('🔍 Payload: ' + JSON.stringify(payload));
+                            
+                            if (payload.type === "chunk") {
+                                accumulatedText += payload.text || '';
+                                assistantDiv.innerHTML = `<strong>assistant:</strong> ${accumulatedText}<span class="typing-cursor">|</span>`;
+                                chatContainer.scrollTop = chatContainer.scrollHeight;
+                            } else if (payload.type === "done") {
+                                assistantDiv.innerHTML = `<strong>assistant:</strong> ${accumulatedText}`;
+                                assistantDiv.classList.remove('typing');
+                                log('✅ Streaming completed');
+                            } else if (payload.type === "error") {
+                                log('❌ Server error: ' + payload.text);
+                                assistantDiv.innerHTML = `<strong>assistant:</strong> ❌ Error: ${payload.text}`;
+                            }
+                        } catch (parseError) {
+                            log('❌ Parse error: ' + parseError);
+                        }
+                    }
+                }
+                
+                // Add to messages history
+                messages.push({ role: 'user', content: messageText });
+                messages.push({ role: 'assistant', content: accumulatedText });
+                
+            } catch (error) {
+                log('❌ Network error: ' + error);
+                assistantDiv.innerHTML = '<strong>assistant:</strong> ❌ Network error: ' + error.message;
+            }
+            
+            messageInput.value = '';
+        }
+        
+        // Test on load
+        window.onload = () => {
+            log('🧪 Streaming test ready');
+            log('📝 Backend URL: http://localhost:10000/chat/stream');
+        };
+        
+        // Allow Enter key to send
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>

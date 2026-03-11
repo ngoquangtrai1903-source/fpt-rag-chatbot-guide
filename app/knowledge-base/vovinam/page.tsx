@@ -40,13 +40,6 @@ export default function VovinamPage() {
     { level: 'Danh dự', desc: 'Vàng trung tâm đỏ', color: 'bg-yellow-400 relative' },
   ]
 
-  const scoringBreakdown = [
-    { criteria: 'Chuyên cần', percent: '30%', desc: 'Có mặt đầy đủ, tích cực' },
-    { criteria: 'Kỹ thuật', percent: '40%', desc: 'Thực hiện chính xác các động tác' },
-    { criteria: 'Thể chất', percent: '20%', desc: 'Sức mạnh, sự dẻo dai' },
-    { criteria: 'Thái độ', percent: '10%', desc: 'Tinh thần, tôn trọng' },
-  ]
-
   const tipsChecklist = [
     { id: 'attitude', label: 'Thái độ quyết định điểm số: Đừng học đối phó - Hãy học để trở thành tốt hơn', icon: Heart },
     { id: 'stance', label: 'Nền tảng từ Tấn: Chú trọng từ đòn thế cơ bản nhất (Tấn)', icon: Target },
@@ -109,15 +102,15 @@ export default function VovinamPage() {
         </div>
       </section>
 
-      {/* Hệ thống đai & cách tính điểm */}
+      {/* Hệ thống đai */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid gap-6">
           <div className="rounded-xl border-2 border-primary/30 bg-card p-6">
             <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
               <span className="text-2xl">🏅</span>
               Hệ thống đai
             </h2>
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {beltLevels.map((belt) => (
                 <div key={belt.level} className="flex items-center gap-3">
                   <div className="relative w-8 h-4 rounded shrink-0">
@@ -145,24 +138,6 @@ export default function VovinamPage() {
                     <span className="font-medium text-sm">{belt.level}</span>
                     <p className="text-xs text-muted-foreground">{belt.desc}</p>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-xl border-2 border-accent/30 bg-card p-6">
-            <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
-              <span className="text-2xl">📊</span>
-              Cách tính điểm
-            </h2>
-            <div className="space-y-3">
-              {scoringBreakdown.map((item) => (
-                <div key={item.criteria} className="flex items-center justify-between">
-                  <div>
-                    <span className="font-medium">{item.criteria}</span>
-                    <p className="text-xs text-muted-foreground">{item.desc}</p>
-                  </div>
-                  <span className="text-lg font-bold text-primary">{item.percent}</span>
                 </div>
               ))}
             </div>
@@ -238,7 +213,7 @@ export default function VovinamPage() {
               <ul className="text-muted-foreground space-y-1">
                 <li>• Nơi giao lưu của những người yêu võ</li>
                 <li>• Tập thêm ngoài giờ với những bạn cùng sở thích</li>
-                <li>• Tham gia các sự kiện \"Võ nhạc\"</li>
+                <li>• Tham gia các sự kiện "Võ nhạc"</li>
                 <li>• Biểu diễn Vovinam Dance trong các lễ hội</li>
               </ul>
             </div>
@@ -268,11 +243,11 @@ export default function VovinamPage() {
             <div className="grid md:grid-cols-3 gap-8 mt-6">
               <div>
                 <h3 className="font-semibold mb-2">Phòng tập</h3>
-                <p className="text-sm text-muted-foreground">Khu thể thao FPTU, tầng 2 • 6:30 AM - 8:00 PM hàng ngày</p>
+                <p className="text-sm text-muted-foreground">Khu nhà võ FPTU • 6:30 AM - 8:00 PM hàng ngày</p>
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Liên hệ</h3>
-                <p className="text-sm text-muted-foreground">Email: pe@fptu.edu.vn</p>
+                <p className="text-sm text-muted-foreground">Email: dvsv.fudn@fe.edu.vn</p>
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Fanpage Vovinam</h3>
@@ -294,14 +269,10 @@ export default function VovinamPage() {
       <section className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-y border-border py-12">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold mb-8 text-center">Thông tin nhanh</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
             <div>
               <div className="text-3xl font-bold text-primary mb-2">16</div>
               <p className="text-sm text-muted-foreground">Cấp độ đai</p>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-accent mb-2">40%</div>
-              <p className="text-sm text-muted-foreground">Điểm kỹ thuật</p>
             </div>
             <div>
               <div className="text-3xl font-bold text-primary mb-2">15-30p</div>
